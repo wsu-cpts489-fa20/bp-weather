@@ -1,0 +1,22 @@
+{
+  "name": "code-ch18-eb",
+  "version": "1.0.0",
+  "description": "Testing instructions for deployment to EB",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node server.js"
+  },
+  "author": "C Hundhausen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.0",
+    "@babel/core": "^7.12.0",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.12.0",
+    "nodemon": "^2.0.5"
+  }
+}
