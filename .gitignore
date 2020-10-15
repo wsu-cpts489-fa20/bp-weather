@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Client dependencies
+# Client/ directory dependencies
 client/node_modules
 client/.pnp
 client/.pnp.js
@@ -19,8 +19,7 @@ client/npm-debug.log*
 client/yarn-debug.log*
 client/yarn-error.log*
 
-#Root dependencies
-Procfile
+#Root directory dependencies
 /node_modules
 /.pnp
 .pnp.js
