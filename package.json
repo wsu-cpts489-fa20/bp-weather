@@ -2,10 +2,10 @@
   "name": "code-ch18-eb",
   "version": "1.0.0",
   "description": "Testing instructions for deployment to EB",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node server.js"
+    "start": "nodemon --exec babel-node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "C Hundhausen",
   "license": "ISC",
