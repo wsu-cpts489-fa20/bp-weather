@@ -1,1 +1,1 @@
-web: node server.compiled.js
+node server.compiled.js
