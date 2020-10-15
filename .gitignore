@@ -29,7 +29,6 @@ Procfile
 # production
 /build
 # misc
-.babelrc
 .DS_Store
 .env.local
 .env.development.local
