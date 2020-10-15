@@ -4,7 +4,8 @@
   "description": "Testing instructions for deployment to EB",
   "main": "server.js",
   "scripts": {
-    "start": "node server-compiled.js",
+    "start": "node server.compiled.js",
+    "build": "babel server.js --out-file server.compiled.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "C Hundhausen",
