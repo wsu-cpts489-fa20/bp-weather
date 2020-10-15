@@ -4,7 +4,9 @@
   "description": "Testing instructions for deployment to EB",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node server.js --ignore client",
+    "build": "babel server.js --out-file server.compiled.js"
   },
   "author": "C Hundhausen",
   "license": "ISC",
