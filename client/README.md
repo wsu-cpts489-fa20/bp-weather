@@ -1,6 +1,13 @@
-# Chapter 17 Code
-This code base captures the state of the speedgolf app after the coding in
-Chapter 17, where we implement a vertical prototype of the Rounds mode.
+# Chapter 19 Elastic Beanstalk Code
+This code base captures the state of the speedgolf React app at the end of
+Chapter 18. It then goes further by working through the steps in Chapter 19
+to deploy the app to AWS Elastic Beanstalk. Per Chapter 19, the repo contains
+a "client" directory containing the Chapter 18 React app. That app is deployed
+through a simple Express server implemented in server.js in the root directory.
+the server.js file is transpiled to server.compiled.js for deployment. The app
+can be launched to http://localhost:8081 through the command npm start. When
+deployed on AWS EB, the app is served at the URL allocated to your app
+instance.
 
 Note: This project was bootstrapped with [Create React
 App](https://github.com/facebook/create-react-app). 
