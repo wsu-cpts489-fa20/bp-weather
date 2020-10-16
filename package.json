@@ -4,8 +4,7 @@
   "description": "Testing instructions for deployment to EB",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --exec node server.compiled.js",
-    "start": "node server.compiled.js",
+    "start": "nodemon --exec node server.compiled.js",
     "build": "babel server.js --out-file server.compiled.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "nodemon": "^2.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.0",
