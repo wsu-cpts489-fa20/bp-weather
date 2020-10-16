@@ -2,7 +2,7 @@
   "name": "code-ch18-eb",
   "version": "1.0.0",
   "description": "Testing instructions for deployment to EB",
-  "main": "server.js",
+  "main": "server.compiled.js",
   "scripts": {
     "start": "nodemon --exec node server.compiled.js",
     "build": "babel server.js --out-file server.compiled.js",
@@ -12,14 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "path": "^0.12.7",
-    "nodemon": "^2.0.5"
+    "path": "^0.12.7"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.0",
-    "@babel/core": "^7.12.0",
-    "@babel/node": "^7.10.5",
-    "@babel/preset-env": "^7.12.0",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.1",
+    "@babel/node": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "nodemon": "^2.0.5"
   }
 }
