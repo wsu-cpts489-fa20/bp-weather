@@ -1,10 +1,8 @@
-# Chapter 19 Elastic Beanstalk Code
+# Chapter 20 Code
 This code base captures the state of the speedgolf React app at the end of
-Chapter 18. It then goes further by working through the steps in Chapter 19
-to deploy the app to AWS Elastic Beanstalk. Per Chapter 19, the repo contains
-a "client" directory containing the Chapter 18 React app. That app is deployed
-through a simple Express server implemented in server.js in the root directory.
-the server.js file is transpiled to server.compiled.js for deployment. The app
+Chapter 20, in which we add OAuth authentication using passport.js. The code
+is set up to deploy to AWS Elastic Beanstalk, per the approach described in
+Chapter 19. The app
 can be launched to http://localhost:8081 through the command npm start. When
 deployed on AWS EB, the app is served at the URL allocated to your app
 instance.
