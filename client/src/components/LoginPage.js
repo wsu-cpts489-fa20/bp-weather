@@ -15,6 +15,8 @@ constructor() {
                   loginBtnLabel: "Log In",
                   showCreateAccountDialog: false,
                   showResetPasswordDialog: false,
+                  githubIcon: "fa fa-github",
+                  githubLabel: "Sign in with GitHub"
                   };
 } 
     
@@ -27,7 +29,7 @@ componentDidMount() {
 handleLogin = () => {
     //Stop spinner
     this.setState({loginBtnIcon: "fa fa-sign-in",
-                loginBtnLabel: "Log In"});
+                   loginBtnLabel: "Log In"});
     //Set current user
     this.props.setUserId(this.emailInputRef.current.value);
     //Trigger switch to FEED mode (default app landing page)
@@ -79,6 +81,22 @@ handleLoginChange = () => {
       this.setState({showCreateAccountDialog: false});
   }
 
+//handleOAuthLogin -- Callback function that initiates contact with OAuth
+//provider
+handleOAuthLogin = (provider) => {
+    window.open(`/auth/${provider}`,"_self");
+}
+
+//handleOAuthLoginClick -- Called whent the user clicks on button to
+//authenticate via a third-party OAuth service. The name of the provider is
+//passed in as a parameter.
+handleOAuthLoginClick = (provider) => {
+   this.setState({[provider + "Icon"] : "fa fa-spin fa-spinner",
+                  [provider + "Label"] : "Connecting..."});
+   setTimeout(() => this.handleOAuthLogin(provider),1000);
+}
+
+
   render() {
     return(
         <div id="login-mode-div" className="padded-page">
@@ -125,6 +143,11 @@ handleLoginChange = () => {
                         onClick={() => {this.setState({showResetPasswordDialog: true});}}>
                 Reset your password</button>
             </p>  
+            <button type="button" className="btn btn-github"
+               onClick={() => this.handleOAuthLoginClick("github")}>
+              <span className={this.state.githubIcon}></span>&nbsp;
+                {this.state.githubLabel}
+            </button>
             <p>
                 <i>Version CptS 489</i>
             </p>

@@ -84,7 +84,7 @@ class CreateAccountDialog extends React.Component {
         let userData = {
             displayName: this.state.displayName,
             password: this.state.accountPassword,
-            profilePicFile: this.state.profilePicFile, //if empty, use default
+            profilePicURL: this.state.profilePicURL, //if empty, use default
             profilePicDataURL: this.state.profilePicDataURL,
             securityQuestion: this.state.accountSecurityQuestion,
             securityAnswer: this.state.accountSecurityAnswer,

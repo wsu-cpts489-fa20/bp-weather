@@ -42,15 +42,37 @@ renderModeMenuItems = () => {
     }
 }
 
+getDisplayName = () => {
+  if (this.props.userId == "") {
+    return "";
+  } else {
+    const data = JSON.parse(localStorage.getItem(this.props.userId));
+    return data.displayName;
+  }
+}
+
+getProfilePic = () => {
+  if (this.props.userId == "") {
+    return "";
+  } else {
+    const data = JSON.parse(localStorage.getItem(this.props.userId));
+    if (data.profilePicURL != "") {
+      return data.profilePicURL;
+    } else {
+      return data.profilePicDataURL;
+    }
+  }
+}
+
     render() {
        return (
         <div className={"sidemenu " + (this.props.menuOpen ? "sidemenu-open" : "sidemenu-closed")}
              onClick={this.props.toggleMenuOpen}>
           {/* SIDE MENU TITLE */}
           <div className="sidemenu-title">
-              <img src='http://tiny.cc/chrisprofilepic' height='50' width='50' />
-              <span id="userID" className="sidemenu-userID">&nbsp;{this.props.userId}</span>
-          </div>
+            <img src={this.getProfilePic()} height='60' width='60' />
+            <span id="userID" className="sidemenu-userID">&nbsp;{this.getDisplayName()}</span>
+        </div>
           {/* MENU CONTENT */}
           {this.renderModeMenuItems()}
           {/* The following menu items are present regardless of mode */}

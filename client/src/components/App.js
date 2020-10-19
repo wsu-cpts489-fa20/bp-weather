@@ -32,8 +32,47 @@ class App extends React.Component {
     super();
     this.state = {mode: AppMode.LOGIN,
                   menuOpen: false,
+                  authenticated: false,
                   userId: ""};
   }
+
+  //componentDidMount
+  componentDidMount() {
+    window.addEventListener("click",this.handleClick);
+    if (!this.state.authenticated) { 
+      //Use /auth/test route to (re)-test authentication and obtain user data
+      fetch("/auth/test")
+        .then((response) => response.json())
+        .then((obj) => {
+          if (obj.isAuthenticated) {
+            const userId = obj.user.id;
+            let data = JSON.parse(localStorage.getItem(userId));
+            if (data == null) {
+              //create new user with this id in database (localStorage)
+              data = {
+                password: '',
+                profilePicURL: obj.user.profileImageUrl,
+                displayName: obj.user.username,
+                securityQuestion: '',
+                securityAnswer: '',
+                rounds: {}, 
+                roundCount: 0
+              };
+              //Commit to localStorage:
+              localStorage.setItem(userId,JSON.stringify(data));
+            } 
+            //Update current user
+            this.setState({
+              userId: userId,
+              authenticated: true,
+              mode: AppMode.FEED //We're authenticated so can get into the app.
+            });
+          }
+        }
+      )
+    } 
+  }
+
 
   handleChangeMode = (newMode) => {
     this.setState({mode: newMode});
@@ -52,7 +91,8 @@ class App extends React.Component {
   }
 
   setUserId = (Id) => {
-    this.setState({userId: Id});
+    this.setState({userId: Id,
+                   authenticated: true});
   }
 
   render() {

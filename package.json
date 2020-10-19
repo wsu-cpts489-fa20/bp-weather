@@ -13,6 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "passport": "^0.4.1",
+    "passport-github": "^1.1.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
