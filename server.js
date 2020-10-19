@@ -10,7 +10,7 @@ import path from 'path';
 import express from 'express';
 
 const LOCAL_PORT = 8081;
-const DEPLOY_URL = "http://localhost:" + LOCAL_PORT;
+const DEPLOY_URL = "http://codech18eb-env.eba-a4ypmhpi.us-east-2.elasticbeanstalk.com";
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
 const GithubStrategy = passportGithub.Strategy;
 const app = express();

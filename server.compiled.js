@@ -18,7 +18,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 //variables used in the server middleware.
 //////////////////////////////////////////////////////////////////////////
 var LOCAL_PORT = 8081;
-var DEPLOY_URL = "http://localhost:" + LOCAL_PORT;
+var DEPLOY_URL = "http://codech18eb-env.eba-a4ypmhpi.us-east-2.elasticbeanstalk.com";
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
 var GithubStrategy = _passportGithub["default"].Strategy;
 var app = (0, _express["default"])(); //////////////////////////////////////////////////////////////////////////
