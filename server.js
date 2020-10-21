@@ -6,14 +6,40 @@
 import passport from 'passport';
 import passportGithub from 'passport-github'; 
 import session from 'express-session';
+import regeneratorRuntime from "regenerator-runtime";
 import path from 'path';
 import express from 'express';
 
 const LOCAL_PORT = 8081;
-const DEPLOY_URL = "http://codech18eb-env.eba-a4ypmhpi.us-east-2.elasticbeanstalk.com";
+const DEPLOY_URL = "http://localhost:8081";
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
 const GithubStrategy = passportGithub.Strategy;
 const app = express();
+
+//////////////////////////////////////////////////////////////////////////
+//MONGOOSE SET-UP
+//The following code sets up the app to connect to a MongoDB database
+//using the mongoose library.
+//////////////////////////////////////////////////////////////////////////
+import mongoose from 'mongoose';
+import { profileEnd } from 'console';
+const connectStr = 'mongodb://localhost:27017/appdb';
+mongoose.connect(connectStr, {useNewUrlParser: true, useUnifiedTopology: true})
+  .then(
+    () =>  {console.log(`Connected to ${connectStr}.`)},
+    err => {console.error(`Error connecting to ${connectStr}: ${err}`)}
+  );
+
+//Define schema that maps to a document in the Users collection in the appdb
+//database.
+const Schema = mongoose.Schema;
+const userSchema = new Schema({
+  id: String, //unique identifier for user
+  displayName: String, //Name to be displayed within app
+  authStrategy: String, //strategy used to authenticate, e.g., github, local
+  profileImageUrl: String //link to profile image
+});
+const User = mongoose.model("User",userSchema); 
 
 //////////////////////////////////////////////////////////////////////////
 //PASSPORT SET-UP
@@ -25,35 +51,47 @@ passport.use(new GithubStrategy({
     clientSecret: "8dde6978090028aee37c72df9ea7ce268678b6d3",
     callbackURL: DEPLOY_URL + "/auth/github/callback"
   },
-  (accessToken, refreshToken, profile, done) => {
-    // TO DO: If user in profile object isn’t yet in our database, add the user here
-    return done(null, profile);
+  //The following function is called after user authenticates with github
+  async (accessToken, refreshToken, profile, done) => {
+    console.log("User authenticated through GitHub! In passport callback.");
+    //Our convention is to build userId from displayName and provider
+    const userId = `${profile.username}@${profile.provider}`;
+    //See if document with this unique userId exists in database 
+    let currentUser = await User.findOne({id: userId});
+    if (!currentUser) { //Add this user to the database
+        currentUser = await new User({
+        id: userId,
+        displayName: profile.displayName,
+        authStrategy: profile.provider,
+        profileImageUrl: profile.photos[0].value
+      }).save();
   }
-));
+  return done(null,currentUser);
+}));
 
+//Serialize the current user to the session
 passport.serializeUser((user, done) => {
     console.log("In serializeUser.");
-    //Note: The code does not use a back-end database. When we have back-end 
-    //database, we would put user info into the database in the callback 
-    //above and only serialize the unique user id into the session
-    let userObject = {
-      id: user.username + "@github",
-      username : user.username,
-      provider : user.provider,
-      profileImageUrl : user.photos[0].value
-    };
-    done(null, userObject);
-  });
+    console.log("Contents of user param: " + JSON.stringify(user));
+    done(null,user.id);
+});
   
-  //Deserialize the current user from the session
-  //to persistent storage.
-  passport.deserializeUser((user, done) => {
-    console.log("In deserializeUser.");
-    //TO DO: Look up the user in the database and attach their data record to
-    //req.user. For the purposes of this demo, the user record received as a param 
-    //is just being passed through, without any database lookup.
-    done(null, user);
-  });
+//Deserialize the current user from the session
+//to persistent storage.
+passport.deserializeUser(async (userId, done) => {
+  console.log("In deserializeUser.");
+  console.log("Contents of userId param: " + userId);
+  let thisUser;
+  try {
+    thisUser = await User.findOne({id: userId});
+    console.log("User with id " + userId + 
+      " found in DB. User object will be available in server routes as req.user.")
+    done(null,thisUser);
+  } catch (err) {
+    done(err);
+  }
+});
+
   
 
 //////////////////////////////////////////////////////////////////////////
