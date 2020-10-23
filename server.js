@@ -40,7 +40,7 @@ const userSchema = new Schema({
   password: String,
   displayName: String, //Name to be displayed within app
   authStrategy: String, //strategy used to authenticate, e.g., github, local
-  profilePicUrl: String, //link to profile image
+  profilePicURL: String, //link to profile image
   securityQuestion: String,
   securityAnswer: String
 });
@@ -68,7 +68,7 @@ passport.use(new GithubStrategy({
         id: userId,
         displayName: profile.displayName,
         authStrategy: profile.provider,
-        profileImageUrl: profile.photos[0].value
+        profilePicURL: profile.photos[0].value
       }).save();
   }
   return done(null,currentUser);
@@ -101,8 +101,6 @@ passport.use(new LocalStrategy({passReqToCallback: true},
   }
 ));
 
-
-
 //Serialize the current user to the session
 passport.serializeUser((user, done) => {
     console.log("In serializeUser.");
@@ -126,8 +124,6 @@ passport.deserializeUser(async (userId, done) => {
   }
 });
 
-  
-
 //////////////////////////////////////////////////////////////////////////
 //INITIALIZE EXPRESS APP
 // The following code uses express.static to serve the React app defined 
@@ -142,7 +138,7 @@ app
   .use(express.static(path.join(__dirname,"client/build")))
   .use(passport.initialize())
   .use(passport.session())
-  .use(express.json())
+  .use(express.json({limit: '20mb'}))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +148,6 @@ app
 /////////////////////////
 //AUTHENTICATION ROUTES
 /////////////////////////
-
 
 //AUTHENTICATE route: Uses passport to authenticate with GitHub.
 //Should be accessed when user clicks on 'Login with GitHub' button on 
@@ -296,7 +291,7 @@ app.put('/users/:userId',  async (req, res, next) => {
         let status = await User.updateOne({id: req.params.userId}, 
           {$set: req.body});
         if (status.nModified != 1) { //account could not be found
-          res.status(400).send("No user account " + req.params.userId + " exists. Account could not be updated.");
+          res.status(404).send("No user account " + req.params.userId + " exists. Account could not be updated.");
         } else {
           res.status(200).send("User account " + req.params.userId + " successfully updated.")
         }

@@ -33,7 +33,8 @@ class App extends React.Component {
     this.state = {mode: AppMode.LOGIN,
                   menuOpen: false,
                   authenticated: false,
-                  userId: ""};
+                  userObj: {displayName: "", profilePicURL: ""},
+                 };
   }
 
   //componentDidMount
@@ -45,25 +46,9 @@ class App extends React.Component {
         .then((response) => response.json())
         .then((obj) => {
           if (obj.isAuthenticated) {
-            const userId = obj.user.id;
-            let data = JSON.parse(localStorage.getItem(userId));
-            if (data == null) {
-              //create new user with this id in database (localStorage)
-              data = {
-                password: '',
-                profilePicURL: obj.user.profileImageUrl,
-                displayName: obj.user.displayName,
-                securityQuestion: '',
-                securityAnswer: '',
-                rounds: {}, 
-                roundCount: 0
-              };
-              //Commit to localStorage:
-              localStorage.setItem(userId,JSON.stringify(data));
-            } 
-            //Update current user
+            const userId = 
             this.setState({
-              userId: userId,
+              userObj: obj.user,
               authenticated: true,
               mode: AppMode.FEED //We're authenticated so can get into the app.
             });
@@ -109,7 +94,8 @@ class App extends React.Component {
             menuOpen = {this.state.menuOpen}
             mode={this.state.mode}
             toggleMenuOpen={this.toggleMenuOpen}
-            userId={this.state.userId}
+            displayName={this.state.userObj.displayName}
+            profilePicURL={this.state.userObj.profilePicURL}
             logOut={() => this.handleChangeMode(AppMode.LOGIN)}/>
           <ModeBar 
             mode={this.state.mode} 

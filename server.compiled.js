@@ -57,7 +57,7 @@ var userSchema = new Schema({
   //Name to be displayed within app
   authStrategy: String,
   //strategy used to authenticate, e.g., github, local
-  profilePicUrl: String,
+  profilePicURL: String,
   //link to profile image
   securityQuestion: String,
   securityAnswer: String
@@ -106,7 +106,7 @@ function () {
               id: userId,
               displayName: profile.displayName,
               authStrategy: profile.provider,
-              profileImageUrl: profile.photos[0].value
+              profilePicURL: profile.photos[0].value
             }).save();
 
           case 8:
@@ -260,7 +260,9 @@ app.use((0, _expressSession["default"])({
   cookie: {
     maxAge: 1000 * 60
   }
-})).use(_express["default"]["static"](_path["default"].join(__dirname, "client/build"))).use(_passport["default"].initialize()).use(_passport["default"].session()).use(_express["default"].json()).listen(PORT, function () {
+})).use(_express["default"]["static"](_path["default"].join(__dirname, "client/build"))).use(_passport["default"].initialize()).use(_passport["default"].session()).use(_express["default"].json({
+  limit: '50mb'
+})).listen(PORT, function () {
   return console.log("Listening on ".concat(PORT));
 }); //////////////////////////////////////////////////////////////////////////
 //DEFINE EXPRESS APP ROUTES

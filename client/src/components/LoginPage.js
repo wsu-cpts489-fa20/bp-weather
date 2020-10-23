@@ -11,7 +11,7 @@ constructor() {
     this.emailInputRef = React.createRef();
     this.passwordInputRef = React.createRef();
     this.state = {accountCreateAttempted: false,
-                  accountCreateMsg: "",
+                  accountCreateMsg: "", //newAccountCreated goes away
                   loginBtnIcon: "fa fa-sign-in",
                   loginBtnLabel: "Log In",
                   showCreateAccountDialog: false,
@@ -64,29 +64,9 @@ hideErrorMsg = () => {
     this.setState({loginMsg: ""});
 }
 
-//handleLoginChange -- Check the validity of the username (email address)
-//password entered into the login page, setting the customValidity message 
-//appropriately. 
-handleLoginChange = () => {
-    let thisUser = this.emailInputRef.current.value;
-    let data = JSON.parse(localStorage.getItem(thisUser));
-    //Check username and password:
-    if (data == null) { 
-        this.emailInputRef.current.setCustomValidity("No account with this email address exists. Choose 'Create an account'.");
-        return; //Exit the function; no need to check pw validity
-    } else {
-        this.emailInputRef.current.setCustomValidity("");
-    }
-    if (data.password != this.passwordInputRef.current.value) {
-        this.passwordInputRef.current.setCustomValidity("The password you entered is incorrect. Please try again or choose 'Reset your password'.");
-    } else {
-        this.passwordInputRef.current.setCustomValidity("");
-    }
-  }
-
-  //newAccountCreated -- Called by child CreateAccountDialog component when new user account
-  //successfully created. Hide the dialog and display a message inviting user to log in
-  //with new credentials.
+  //accountCreateStatus -- Called by child CreateAccountDialog component when 
+  //user attempted to create new account. Hide the dialog and display 
+  //a message indicating result of the attempt.
   accountCreateStatus = (msg) => {
       this.setState({accountCreateAttempted: true,
                      accountCreateMsg: msg,
@@ -121,7 +101,7 @@ handleOAuthLoginClick = (provider) => {
         <center>
             <h1 />
             {this.state.accountCreateAttempted ? <p className="emphasis">{this.state.accountCreateMsg}</p> : null}
-            <form id="loginInterface" onSubmit={this.handleLoginSubmit} onChange={this.handleLoginChange}>
+            <form id="loginInterface" onSubmit={this.handleLoginSubmit}>
             <label htmlFor="emailInput" style={{ padding: 0, fontSize: 24 }}>
                 Email:
                 <input

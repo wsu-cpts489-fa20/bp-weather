@@ -10,7 +10,6 @@ class CreateAccountDialog extends React.Component {
         this.profilePicRef = React.createRef();
         this.state = {accountName: "",
                       displayName: "",
-                      profilePicDataURL: "",
                       profilePicURL: "https://icon-library.net//images/default-profile-icon/default-profile-icon-24.jpg",
                       accountPassword: "",
                       accountPasswordRepeat: "",
@@ -33,30 +32,20 @@ class CreateAccountDialog extends React.Component {
         } else {
             this.repeatPassRef.current.setCustomValidity("");
         }
-        let data = JSON.parse(localStorage.getItem(this.newUserRef.current.value));
-        if (data != null) {
-            //The user name is already taken
-            this.newUserRef.current.setCustomValidity("An account already exists under this email address. " +
-              "Use 'Reset password' to recover the password.");
-        } else {
-            this.newUserRef.current.setCustomValidity("");
-        }
     }
 
     //handleNewAccountChange--Called when a field in a dialog box form changes.
     handleNewAccountChange = (event) => {
         if (event.target.name === "profilePic") {
             if (event.target.value.length == 0) { //The user canceled the file selection -- set back to default
-                this.setState({profilePicDataURL: "",
-                profilePicURL: "https://icon-library.net//images/default-profile-icon/default-profile-icon-24.jpg"});
+                this.setState({profilePicURL: "https://icon-library.net//images/default-profile-icon/default-profile-icon-24.jpg"});
             } else { //The user selected a file
                 const self = this;
                 const val = event.target.value;
                 const reader = new FileReader();
                 reader.readAsDataURL(this.profilePicRef.current.files[0]);
                 reader.addEventListener("load",function() {
-                    self.setState({profilePicURL: "",
-                                   profilePicDataURL: this.result});
+                    self.setState({profilePicURL: this.result});
                 });
             }
         } else {
@@ -80,22 +69,19 @@ class CreateAccountDialog extends React.Component {
     //landing page. 
     handleCreateAccount = async (event) =>{
         event.preventDefault();
-        const url = '/users' + this.state.accountName;
+        const url = '/users/' + this.state.accountName;
         const accountInfo = {
             displayName: this.state.displayName,
             password: this.state.accountPassword,
-            profilePicURL: (this.state.profilePicURL != "" ? this.state.profilePicDataURL : 
-                            this.state.profilePicDataURL),
+            profilePicURL: this.state.profilePicURL,
             securityQuestion: this.state.accountSecurityQuestion,
             securityAnswer: this.state.accountSecurityAnswer,
-            rounds: {},
-            roundCount: 0
         };
         const res = await fetch(url, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-              },
+                },
             method: 'POST',
             body: JSON.stringify(accountInfo)}); 
         if (res.status == 200) { //successful account creation!
@@ -191,9 +177,7 @@ class CreateAccountDialog extends React.Component {
                 value={this.state.profilePic}
                 onChange={this.handleNewAccountChange}
                 />
-                <img src={this.state.profilePicURL != "" ? 
-                            this.state.profilePicURL :
-                            this.state.profilePicDataURL} 
+                <img src={this.state.profilePicURL} 
                         height="60" width="60" />
             </label> 
             <label>
