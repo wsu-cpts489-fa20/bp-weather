@@ -78,23 +78,33 @@ class CreateAccountDialog extends React.Component {
     //already exist and that the rest of the info is valid. We create a new  
     // object for user, save it to localStorage and take user to app's 
     //landing page. 
-    handleCreateAccount = (event) => {
+    handleCreateAccount = async (event) =>{
         event.preventDefault();
-        //Initialize user account
-        let userData = {
+        const url = '/users' + this.state.accountName;
+        const accountInfo = {
             displayName: this.state.displayName,
             password: this.state.accountPassword,
-            profilePicURL: this.state.profilePicURL, //if empty, use default
-            profilePicDataURL: this.state.profilePicDataURL,
+            profilePicURL: (this.state.profilePicURL != "" ? this.state.profilePicDataURL : 
+                            this.state.profilePicDataURL),
             securityQuestion: this.state.accountSecurityQuestion,
             securityAnswer: this.state.accountSecurityAnswer,
             rounds: {},
             roundCount: 0
         };
-        //Commit to local storage
-        localStorage.setItem(this.state.accountName,JSON.stringify(userData));
-        //Invite user to log in using new account
-        this.props.newAccountCreated();
+        const res = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            method: 'POST',
+            body: JSON.stringify(accountInfo)}); 
+        if (res.status == 200) { //successful account creation!
+            this.props.accountCreateStatus("New account created! Enter credentials to log in.");
+        } else { //Unsuccessful account creation
+            //Grab textual error message
+            const resText = await res.text();
+            this.props.accountCreateStatus(resText);
+        }
     }
 
     render() {

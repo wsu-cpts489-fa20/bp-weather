@@ -4,6 +4,8 @@ var _passport = _interopRequireDefault(require("passport"));
 
 var _passportGithub = _interopRequireDefault(require("passport-github"));
 
+var _passportLocal = _interopRequireDefault(require("passport-local"));
+
 var _expressSession = _interopRequireDefault(require("express-session"));
 
 var _regeneratorRuntime = _interopRequireDefault(require("regenerator-runtime"));
@@ -26,6 +28,7 @@ var LOCAL_PORT = 8081;
 var DEPLOY_URL = "http://localhost:8081";
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
 var GithubStrategy = _passportGithub["default"].Strategy;
+var LocalStrategy = _passportLocal["default"].Strategy;
 var app = (0, _express["default"])(); //////////////////////////////////////////////////////////////////////////
 //MONGOOSE SET-UP
 //The following code sets up the app to connect to a MongoDB database
@@ -49,12 +52,15 @@ var Schema = _mongoose["default"].Schema;
 var userSchema = new Schema({
   id: String,
   //unique identifier for user
+  password: String,
   displayName: String,
   //Name to be displayed within app
   authStrategy: String,
   //strategy used to authenticate, e.g., github, local
-  profileImageUrl: String //link to profile image
-
+  profilePicUrl: String,
+  //link to profile image
+  securityQuestion: String,
+  securityAnswer: String
 });
 
 var User = _mongoose["default"].model("User", userSchema); //////////////////////////////////////////////////////////////////////////
@@ -120,6 +126,76 @@ function () {
   return function (_x, _x2, _x3, _x4) {
     return _ref.apply(this, arguments);
   };
+}()));
+
+_passport["default"].use(new LocalStrategy({
+  passReqToCallback: true
+},
+/*#__PURE__*/
+//Called when user is attempting to log in with local username and password. 
+//userId contains the email address entered into the form and password
+//contains the password entered into the form.
+function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee2(req, userId, password, done) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            _context2.next = 3;
+            return User.findOne({
+              id: userId
+            });
+
+          case 3:
+            thisUser = _context2.sent;
+
+            if (!thisUser) {
+              _context2.next = 13;
+              break;
+            }
+
+            if (!(thisUser.password === password)) {
+              _context2.next = 9;
+              break;
+            }
+
+            return _context2.abrupt("return", done(null, thisUser));
+
+          case 9:
+            req.authError = "The password is incorrect. Please try again" + " or reset your password.";
+            return _context2.abrupt("return", done(null, false));
+
+          case 11:
+            _context2.next = 15;
+            break;
+
+          case 13:
+            //userId not found in DB
+            req.authError = "There is no account with email " + userId + ". Please try again.";
+            return _context2.abrupt("return", done(null, false));
+
+          case 15:
+            _context2.next = 20;
+            break;
+
+          case 17:
+            _context2.prev = 17;
+            _context2.t0 = _context2["catch"](0);
+            return _context2.abrupt("return", done(_context2.t0));
+
+          case 20:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[0, 17]]);
+  }));
+
+  return function (_x5, _x6, _x7, _x8) {
+    return _ref2.apply(this, arguments);
+  };
 }())); //Serialize the current user to the session
 
 
@@ -132,42 +208,42 @@ _passport["default"].serializeUser(function (user, done) {
 
 
 _passport["default"].deserializeUser( /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee2(userId, done) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee3(userId, done) {
     var thisUser;
-    return _regeneratorRuntime["default"].wrap(function _callee2$(_context2) {
+    return _regeneratorRuntime["default"].wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             console.log("In deserializeUser.");
             console.log("Contents of userId param: " + userId);
-            _context2.prev = 2;
-            _context2.next = 5;
+            _context3.prev = 2;
+            _context3.next = 5;
             return User.findOne({
               id: userId
             });
 
           case 5:
-            thisUser = _context2.sent;
+            thisUser = _context3.sent;
             console.log("User with id " + userId + " found in DB. User object will be available in server routes as req.user.");
             done(null, thisUser);
-            _context2.next = 13;
+            _context3.next = 13;
             break;
 
           case 10:
-            _context2.prev = 10;
-            _context2.t0 = _context2["catch"](2);
-            done(_context2.t0);
+            _context3.prev = 10;
+            _context3.t0 = _context3["catch"](2);
+            done(_context3.t0);
 
           case 13:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2, null, [[2, 10]]);
+    }, _callee3, null, [[2, 10]]);
   }));
 
-  return function (_x5, _x6) {
-    return _ref2.apply(this, arguments);
+  return function (_x9, _x10) {
+    return _ref3.apply(this, arguments);
   };
 }()); //////////////////////////////////////////////////////////////////////////
 //INITIALIZE EXPRESS APP
@@ -184,11 +260,14 @@ app.use((0, _expressSession["default"])({
   cookie: {
     maxAge: 1000 * 60
   }
-})).use(_express["default"]["static"](_path["default"].join(__dirname, "client/build"))).use(_passport["default"].initialize()).use(_passport["default"].session()).listen(PORT, function () {
+})).use(_express["default"]["static"](_path["default"].join(__dirname, "client/build"))).use(_passport["default"].initialize()).use(_passport["default"].session()).use(_express["default"].json()).listen(PORT, function () {
   return console.log("Listening on ".concat(PORT));
 }); //////////////////////////////////////////////////////////////////////////
 //DEFINE EXPRESS APP ROUTES
 //////////////////////////////////////////////////////////////////////////
+/////////////////////////
+//AUTHENTICATION ROUTES
+/////////////////////////
 //AUTHENTICATE route: Uses passport to authenticate with GitHub.
 //Should be accessed when user clicks on 'Login with GitHub' button on 
 //Log In page.
@@ -230,4 +309,278 @@ app.get('/auth/test', function (req, res) {
     isAuthenticated: isAuth,
     user: req.user
   });
-});
+}); //LOGIN route: Attempts to log in user using local strategy
+
+app.post('/auth/login', _passport["default"].authenticate('local', {
+  failWithError: true
+}), function (req, res) {
+  console.log("/login route reached: successful authentication."); //Redirect to app's main page; the /auth/test route should return true
+
+  res.status(200).send("Login successful");
+}, function (err, req, res, next) {
+  console.log("/login route reached: unsuccessful authentication"); //res.sendStatus(401);
+
+  if (req.authError) {
+    console.log("req.authError: " + req.authError);
+    res.status(401).send(req.authError);
+  } else {
+    res.status(401).send("Unexpected error occurred when attempting to authenticate. Please try again.");
+  } //Note: Do NOT redirect! Client will take over.
+
+}); /////////////////////////////////
+//USER ACCOUNT MANAGEMENT ROUTES
+////////////////////////////////
+//READ user route: Retrieves the user with the specified userId from users collection (GET)
+
+app.get('/users/:userId', /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee4(req, res, next) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            console.log("in /users route (GET) with userId = " + JSON.stringify(req.params.userId));
+            _context4.prev = 1;
+            _context4.next = 4;
+            return User.findOne({
+              id: req.params.userId
+            });
+
+          case 4:
+            thisUser = _context4.sent;
+
+            if (thisUser) {
+              _context4.next = 9;
+              break;
+            }
+
+            return _context4.abrupt("return", res.status(404).send("No user account with id " + req.params.userId + " was found in database."));
+
+          case 9:
+            return _context4.abrupt("return", res.status(200).json(JSON.stringify(thisUser)));
+
+          case 10:
+            _context4.next = 16;
+            break;
+
+          case 12:
+            _context4.prev = 12;
+            _context4.t0 = _context4["catch"](1);
+            console.log();
+            return _context4.abrupt("return", res.status(400).send("Unexpected error occurred when looking up user with id " + req.params.userId + " in database: " + _context4.t0));
+
+          case 16:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, null, [[1, 12]]);
+  }));
+
+  return function (_x11, _x12, _x13) {
+    return _ref4.apply(this, arguments);
+  };
+}()); //CREATE user route: Adds a new user account to the users collection (POST)
+
+app.post('/users/:userId', /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee5(req, res, next) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            console.log("in /users route (POST) with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
+
+            if (!(req.body === undefined || !req.body.hasOwnProperty("password") || !req.body.hasOwnProperty("displayName") || !req.body.hasOwnProperty("profilePicURL") || !req.body.hasOwnProperty("securityQuestion") || !req.body.hasOwnProperty("securityAnswer"))) {
+              _context5.next = 3;
+              break;
+            }
+
+            return _context5.abrupt("return", res.status(400).send("/users POST request formulated incorrectly. " + "It must contain 'password','displayName','profilePicURL','securityQuestion' and 'securityAnswer fields in message body."));
+
+          case 3:
+            _context5.prev = 3;
+            _context5.next = 6;
+            return User.findOne({
+              id: req.params.userId
+            });
+
+          case 6:
+            thisUser = _context5.sent;
+
+            if (!thisUser) {
+              _context5.next = 11;
+              break;
+            }
+
+            //account already exists
+            res.status(400).send("There is already an account with email '" + req.params.userId + "'.");
+            _context5.next = 15;
+            break;
+
+          case 11:
+            _context5.next = 13;
+            return new User({
+              id: req.params.userId,
+              password: req.body.password,
+              displayName: req.body.displayName,
+              authStrategy: 'local',
+              profilePicURL: req.body.profilePicURL,
+              securityQuestion: req.body.securityQuestion,
+              securityAnswer: req.body.securityAnswer
+            }).save();
+
+          case 13:
+            thisUser = _context5.sent;
+            return _context5.abrupt("return", res.status(201).send("New account for '" + req.params.userId + "' successfully created."));
+
+          case 15:
+            _context5.next = 20;
+            break;
+
+          case 17:
+            _context5.prev = 17;
+            _context5.t0 = _context5["catch"](3);
+            return _context5.abrupt("return", res.status(400).send("Unexpected error occurred when adding or looking up user in database. " + _context5.t0));
+
+          case 20:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, null, [[3, 17]]);
+  }));
+
+  return function (_x14, _x15, _x16) {
+    return _ref5.apply(this, arguments);
+  };
+}()); //UPDATE user route: Updates a new user account in the users collection (POST)
+
+app.put('/users/:userId', /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee6(req, res, next) {
+    var validProps, bodyProp, status;
+    return _regeneratorRuntime["default"].wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            console.log("in /users update route (PUT) with userId = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
+
+            if (req.params.hasOwnProperty("userId")) {
+              _context6.next = 3;
+              break;
+            }
+
+            return _context6.abrupt("return", res.status(400).send("users/ PUT request formulated incorrectly." + "It must contain 'userId' as parameter."));
+
+          case 3:
+            validProps = ['password', 'displayName', 'profilePicURL', 'securityQuestion', 'securityAnswer'];
+            _context6.t0 = _regeneratorRuntime["default"].keys(req.body);
+
+          case 5:
+            if ((_context6.t1 = _context6.t0()).done) {
+              _context6.next = 11;
+              break;
+            }
+
+            bodyProp = _context6.t1.value;
+
+            if (validProps.includes(bodyProp)) {
+              _context6.next = 9;
+              break;
+            }
+
+            return _context6.abrupt("return", res.status(400).send("users/ PUT request formulated incorrectly." + "Only the following props are allowed in body: " + "'password', 'displayname', 'profilePicURL', 'securityQuestion', 'securityAnswer'"));
+
+          case 9:
+            _context6.next = 5;
+            break;
+
+          case 11:
+            _context6.prev = 11;
+            _context6.next = 14;
+            return User.updateOne({
+              id: req.params.userId
+            }, {
+              $set: req.body
+            });
+
+          case 14:
+            status = _context6.sent;
+
+            if (status.nModified != 1) {
+              //account could not be found
+              res.status(400).send("No user account " + req.params.userId + " exists. Account could not be updated.");
+            } else {
+              res.status(200).send("User account " + req.params.userId + " successfully updated.");
+            }
+
+            _context6.next = 21;
+            break;
+
+          case 18:
+            _context6.prev = 18;
+            _context6.t2 = _context6["catch"](11);
+            res.status(400).send("Unexpected error occurred when updating user data in database: " + _context6.t2);
+
+          case 21:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6, null, [[11, 18]]);
+  }));
+
+  return function (_x17, _x18, _x19) {
+    return _ref6.apply(this, arguments);
+  };
+}()); //DELETE user route: Deletes the document with the specified userId from users collection (DELETE)
+
+app["delete"]('/users/:userId', /*#__PURE__*/function () {
+  var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee7(req, res, next) {
+    var status;
+    return _regeneratorRuntime["default"].wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            console.log("in /users route (DELETE) with userId = " + JSON.stringify(req.params.userId));
+            _context7.prev = 1;
+            _context7.next = 4;
+            return User.deleteOne({
+              id: req.params.userId
+            });
+
+          case 4:
+            status = _context7.sent;
+
+            if (!(status.deletedCount != 1)) {
+              _context7.next = 9;
+              break;
+            }
+
+            return _context7.abrupt("return", res.status(404).send("No user account " + req.params.userId + " was found. Account could not be deleted."));
+
+          case 9:
+            return _context7.abrupt("return", res.status(200).send("User account " + req.params.userId + " was successfully deleted."));
+
+          case 10:
+            _context7.next = 16;
+            break;
+
+          case 12:
+            _context7.prev = 12;
+            _context7.t0 = _context7["catch"](1);
+            console.log();
+            return _context7.abrupt("return", res.status(400).send("Unexpected error occurred when attempting to delete user account with id " + req.params.userId + ": " + _context7.t0));
+
+          case 16:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7, null, [[1, 12]]);
+  }));
+
+  return function (_x20, _x21, _x22) {
+    return _ref7.apply(this, arguments);
+  };
+}());
