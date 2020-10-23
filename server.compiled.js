@@ -261,7 +261,7 @@ app.use((0, _expressSession["default"])({
     maxAge: 1000 * 60
   }
 })).use(_express["default"]["static"](_path["default"].join(__dirname, "client/build"))).use(_passport["default"].initialize()).use(_passport["default"].session()).use(_express["default"].json({
-  limit: '50mb'
+  limit: '20mb'
 })).listen(PORT, function () {
   return console.log("Listening on ".concat(PORT));
 }); //////////////////////////////////////////////////////////////////////////
@@ -511,7 +511,7 @@ app.put('/users/:userId', /*#__PURE__*/function () {
 
             if (status.nModified != 1) {
               //account could not be found
-              res.status(400).send("No user account " + req.params.userId + " exists. Account could not be updated.");
+              res.status(404).send("No user account " + req.params.userId + " exists. Account could not be updated.");
             } else {
               res.status(200).send("User account " + req.params.userId + " successfully updated.");
             }
