@@ -10,8 +10,7 @@ constructor() {
     //Create a ref for the email input DOM element
     this.emailInputRef = React.createRef();
     this.passwordInputRef = React.createRef();
-    this.state = {accountCreateAttempted: false,
-                  accountCreateMsg: "", //newAccountCreated goes away
+    this.state = {accountCreateMsg: "",
                   loginBtnIcon: "fa fa-sign-in",
                   loginBtnLabel: "Log In",
                   showCreateAccountDialog: false,
@@ -53,23 +52,15 @@ handleLoginSubmit = async (event) => {
       const resText = await res.text();
       this.setState({loginBtnIcon: "fa fa-sign-in",
                      loginBtnLabel: "Log In",
-                     loginMsg: resText}, () => setTimeout(this.hideErrorMsg,3000));
+                     loginMsg: resText});
     }
-}
-
-//hideErrorMsg -- Hide the error message and clear out username/password fields
-hideErrorMsg = () => {
-    this.emailInputRef.current.value = "";
-    this.passwordInputRef.current.value = "";
-    this.setState({loginMsg: ""});
 }
 
   //accountCreateStatus -- Called by child CreateAccountDialog component when 
   //user attempted to create new account. Hide the dialog and display 
   //a message indicating result of the attempt.
   accountCreateStatus = (msg) => {
-      this.setState({accountCreateAttempted: true,
-                     accountCreateMsg: msg,
+      this.setState({accountCreateMsg: msg,
                      showCreateAccountDialog: false});
   }
 
@@ -100,7 +91,8 @@ handleOAuthLoginClick = (provider) => {
         <div id="login-mode-div" className="padded-page">
         <center>
             <h1 />
-            {this.state.accountCreateAttempted ? <p className="emphasis">{this.state.accountCreateMsg}</p> : null}
+            {this.state.accountCreateMsg != "" ? <p className="emphasis">{this.state.accountCreateMsg}</p> : null}
+            {this.state.loginMsg != "" ? <p className="emphasis">{this.state.loginMsg}</p> : null}
             <form id="loginInterface" onSubmit={this.handleLoginSubmit}>
             <label htmlFor="emailInput" style={{ padding: 0, fontSize: 24 }}>
                 Email:

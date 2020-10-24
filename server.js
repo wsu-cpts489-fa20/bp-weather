@@ -199,7 +199,6 @@ app.post('/auth/login',
   },
   (err, req, res, next) => {
     console.log("/login route reached: unsuccessful authentication");
-    //res.sendStatus(401);
     if (req.authError) {
       console.log("req.authError: " + req.authError);
       res.status(401).send(req.authError);
