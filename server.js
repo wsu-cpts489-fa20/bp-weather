@@ -32,6 +32,28 @@ mongoose.connect(connectStr, {useNewUrlParser: true, useUnifiedTopology: true})
     err => {console.error(`Error connecting to ${connectStr}: ${err}`)}
   );
 
+const roundSchema = new Schema({
+  date: {type: Date, required: true},
+  course: {type: String, required: true},
+  type: {type: String, required: true, enum: ['practice','tournament']},
+  holes: {type: Number, required: true, min: 1, max: 18},
+  strokes: {type: Number, required: true, min: 1, max: 300},
+  minutes: {type: Number, required: true, min: 1, max: 240},
+  seconds: {type: Number, required: true, min: 0, max: 60},
+  notes: {type: String, required: true}
+},
+{
+  toObject: {
+  virtuals: true
+  },
+  toJSON: {
+  virtuals: true 
+});
+
+roundSchema.virtual('SGS').get(function() {
+  return (this.strokes * 60) + (this.minutes * 60) + this.seconds;
+});
+
 //Define schema that maps to a document in the Users collection in the appdb
 //database.
 const Schema = mongoose.Schema;
@@ -42,7 +64,9 @@ const userSchema = new Schema({
   authStrategy: String, //strategy used to authenticate, e.g., github, local
   profilePicURL: String, //link to profile image
   securityQuestion: String,
-  securityAnswer: String
+  securityAnswer: {type: String, required: function() 
+    {return this.securityQuestion ? true: false}},
+  rounds: [roundSchema]
 });
 const User = mongoose.model("User",userSchema); 
 
