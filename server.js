@@ -48,6 +48,7 @@ const roundSchema = new Schema({
   },
   toJSON: {
   virtuals: true 
+  }
 });
 
 roundSchema.virtual('SGS').get(function() {
