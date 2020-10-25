@@ -20,6 +20,12 @@ var _console = require("console");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -44,11 +50,64 @@ _mongoose["default"].connect(connectStr, {
   console.log("Connected to ".concat(connectStr, "."));
 }, function (err) {
   console.error("Error connecting to ".concat(connectStr, ": ").concat(err));
+});
+
+var Schema = _mongoose["default"].Schema;
+var roundSchema = new Schema({
+  date: {
+    type: Date,
+    required: true
+  },
+  course: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    required: true,
+    "enum": ['practice', 'tournament']
+  },
+  holes: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 18
+  },
+  strokes: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 300
+  },
+  minutes: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 240
+  },
+  seconds: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 60
+  },
+  notes: {
+    type: String,
+    required: true
+  }
+}, {
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
+  }
+});
+roundSchema.virtual('SGS').get(function () {
+  return this.strokes * 60 + this.minutes * 60 + this.seconds;
 }); //Define schema that maps to a document in the Users collection in the appdb
 //database.
 
-
-var Schema = _mongoose["default"].Schema;
 var userSchema = new Schema({
   id: String,
   //unique identifier for user
@@ -60,7 +119,13 @@ var userSchema = new Schema({
   profilePicURL: String,
   //link to profile image
   securityQuestion: String,
-  securityAnswer: String
+  securityAnswer: {
+    type: String,
+    required: function required() {
+      return this.securityQuestion ? true : false;
+    }
+  },
+  rounds: [roundSchema]
 });
 
 var User = _mongoose["default"].model("User", userSchema); //////////////////////////////////////////////////////////////////////////
@@ -320,7 +385,7 @@ app.post('/auth/login', _passport["default"].authenticate('local', {
 
   res.status(200).send("Login successful");
 }, function (err, req, res, next) {
-  console.log("/login route reached: unsuccessful authentication"); //res.sendStatus(401);
+  console.log("/login route reached: unsuccessful authentication");
 
   if (req.authError) {
     console.log("req.authError: " + req.authError);
@@ -429,7 +494,8 @@ app.post('/users/:userId', /*#__PURE__*/function () {
               authStrategy: 'local',
               profilePicURL: req.body.profilePicURL,
               securityQuestion: req.body.securityQuestion,
-              securityAnswer: req.body.securityAnswer
+              securityAnswer: req.body.securityAnswer,
+              rounds: []
             }).save();
 
           case 13:
@@ -584,5 +650,253 @@ app["delete"]('/users/:userId', /*#__PURE__*/function () {
 
   return function (_x20, _x21, _x22) {
     return _ref7.apply(this, arguments);
+  };
+}()); /////////////////////////////////
+//ROUNDS ROUTES
+////////////////////////////////
+//CREATE round route: Adds a new round as a subdocument to 
+//a document in the users collection (POST)
+
+app.post('/rounds/:userId', /*#__PURE__*/function () {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee8(req, res, next) {
+    var status;
+    return _regeneratorRuntime["default"].wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            console.log("in /rounds (POST) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
+
+            if (!(!req.body.hasOwnProperty("date") || !req.body.hasOwnProperty("course") || !req.body.hasOwnProperty("type") || !req.body.hasOwnProperty("holes") || !req.body.hasOwnProperty("strokes") || !req.body.hasOwnProperty("minutes") || !req.body.hasOwnProperty("seconds") || !req.body.hasOwnProperty("notes"))) {
+              _context8.next = 3;
+              break;
+            }
+
+            return _context8.abrupt("return", res.status(400).send("POST request on /rounds formulated incorrectly." + "Body must contain all 8 required fields: date, course, type, holes, strokes, " + "minutes, seconds, notes."));
+
+          case 3:
+            _context8.prev = 3;
+            _context8.next = 6;
+            return User.update({
+              id: req.params.userId
+            }, {
+              $push: {
+                rounds: req.body
+              }
+            });
+
+          case 6:
+            status = _context8.sent;
+
+            if (status.nModified != 1) {
+              //Should never happen!
+              res.status(400).send("Unexpected error occurred when adding round to" + " database. Round was not added.");
+            } else {
+              res.status(200).send("Round successfully added to database.");
+            }
+
+            _context8.next = 14;
+            break;
+
+          case 10:
+            _context8.prev = 10;
+            _context8.t0 = _context8["catch"](3);
+            console.log(_context8.t0);
+            return _context8.abrupt("return", res.status(400).send("Unexpected error occurred when adding round" + " to database: " + _context8.t0));
+
+          case 14:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8, null, [[3, 10]]);
+  }));
+
+  return function (_x23, _x24, _x25) {
+    return _ref8.apply(this, arguments);
+  };
+}()); //READ round route: Returns all rounds associated 
+//with a given user in the users collection (GET)
+
+app.get('/rounds/:userId', /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee9(req, res) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            console.log("in /rounds route (GET) with userId = " + JSON.stringify(req.params.userId));
+            _context9.prev = 1;
+            _context9.next = 4;
+            return User.findOne({
+              id: req.params.userId
+            });
+
+          case 4:
+            thisUser = _context9.sent;
+
+            if (thisUser) {
+              _context9.next = 9;
+              break;
+            }
+
+            return _context9.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
+
+          case 9:
+            return _context9.abrupt("return", res.status(200).json(JSON.stringify(thisUser.rounds)));
+
+          case 10:
+            _context9.next = 16;
+            break;
+
+          case 12:
+            _context9.prev = 12;
+            _context9.t0 = _context9["catch"](1);
+            console.log();
+            return _context9.abrupt("return", res.status(400).message("Unexpected error occurred when looking up user in database: " + _context9.t0));
+
+          case 16:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9, null, [[1, 12]]);
+  }));
+
+  return function (_x26, _x27) {
+    return _ref9.apply(this, arguments);
+  };
+}()); //UPDATE round route: Updates a specific round 
+//for a given user in the users collection (PUT)
+
+app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee10(req, res, next) {
+    var validProps, bodyObj, bodyProp, status;
+    return _regeneratorRuntime["default"].wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            console.log("in /rounds (PUT) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
+            validProps = ['date', 'course', 'type', 'holes', 'strokes', 'minutes', 'seconds', 'notes'];
+            bodyObj = _objectSpread({}, req.body);
+            delete bodyObj._id; //Not needed for update
+
+            delete bodyObj.SGS; //We'll compute this below in seconds.
+
+            _context10.t0 = _regeneratorRuntime["default"].keys(bodyObj);
+
+          case 6:
+            if ((_context10.t1 = _context10.t0()).done) {
+              _context10.next = 16;
+              break;
+            }
+
+            bodyProp = _context10.t1.value;
+
+            if (validProps.includes(bodyProp)) {
+              _context10.next = 12;
+              break;
+            }
+
+            return _context10.abrupt("return", res.status(400).send("rounds/ PUT request formulated incorrectly." + "It includes " + bodyProp + ". However, only the following props are allowed: " + "'date', 'course', 'type', 'holes', 'strokes', " + "'minutes', 'seconds', 'notes'"));
+
+          case 12:
+            bodyObj["rounds.$." + bodyProp] = bodyObj[bodyProp];
+            delete bodyObj[bodyProp];
+
+          case 14:
+            _context10.next = 6;
+            break;
+
+          case 16:
+            _context10.prev = 16;
+            _context10.next = 19;
+            return User.updateOne({
+              "id": req.params.userId,
+              "rounds._id": _mongoose["default"].Types.ObjectId(req.params.roundId)
+            }, {
+              "$set": bodyObj
+            });
+
+          case 19:
+            status = _context10.sent;
+
+            if (status.nModified != 1) {
+              res.status(400).send("Unexpected error occurred when updating round in database. Round was not updated.");
+            } else {
+              res.status(200).send("Round successfully updated in database.");
+            }
+
+            _context10.next = 27;
+            break;
+
+          case 23:
+            _context10.prev = 23;
+            _context10.t2 = _context10["catch"](16);
+            console.log(_context10.t2);
+            return _context10.abrupt("return", res.status(400).send("Unexpected error occurred when updating round in database: " + _context10.t2));
+
+          case 27:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10, null, [[16, 23]]);
+  }));
+
+  return function (_x28, _x29, _x30) {
+    return _ref10.apply(this, arguments);
+  };
+}()); //DELETE round route: Deletes a specific round 
+//for a given user in the users collection (DELETE)
+
+app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
+  var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee11(req, res, next) {
+    var status;
+    return _regeneratorRuntime["default"].wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            console.log("in /rounds (DELETE) route with params = " + JSON.stringify(req.params));
+            _context11.prev = 1;
+            _context11.next = 4;
+            return User.updateOne({
+              id: req.params.userId
+            }, {
+              $pull: {
+                rounds: {
+                  _id: _mongoose["default"].Types.ObjectId(req.params.roundId)
+                }
+              }
+            });
+
+          case 4:
+            status = _context11.sent;
+
+            if (status.nModified != 1) {
+              //Should never happen!
+              res.status(400).send("Unexpected error occurred when deleting round from database. Round was not deleted.");
+            } else {
+              res.status(200).send("Round successfully deleted from database.");
+            }
+
+            _context11.next = 12;
+            break;
+
+          case 8:
+            _context11.prev = 8;
+            _context11.t0 = _context11["catch"](1);
+            console.log(_context11.t0);
+            return _context11.abrupt("return", res.status(400).send("Unexpected error occurred when deleting round from database: " + _context11.t0));
+
+          case 12:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11, null, [[1, 8]]);
+  }));
+
+  return function (_x31, _x32, _x33) {
+    return _ref11.apply(this, arguments);
   };
 }());
