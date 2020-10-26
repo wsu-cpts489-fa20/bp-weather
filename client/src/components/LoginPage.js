@@ -27,15 +27,15 @@ componentDidMount() {
 }  
 
 //handleLogin -- Callback function that sets up initial app state upon login.
-handleLogin = () => {
+//handleLogin = () => {
     //Stop spinner
-    this.setState({loginBtnIcon: "fa fa-sign-in",
-                   loginBtnLabel: "Log In"});
+//    this.setState({loginBtnIcon: "fa fa-sign-in",
+ //                  loginBtnLabel: "Log In"});
     //Set current user
-    this.props.setUserId(this.emailInputRef.current.value);
+    //this.props.setUserId(this.emailInputRef.current.value);
     //Trigger switch to FEED mode (default app landing page)
-    this.props.changeMode(AppMode.FEED);
-}
+    //this.props.changeMode(AppMode.FEED);
+//}
 
 
 //handleLoginSubmit -- Called when user clicks on login button.

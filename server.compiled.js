@@ -171,7 +171,8 @@ function () {
               id: userId,
               displayName: profile.displayName,
               authStrategy: profile.provider,
-              profilePicURL: profile.photos[0].value
+              profilePicURL: profile.photos[0].value,
+              rounds: []
             }).save();
 
           case 8:
@@ -676,7 +677,7 @@ app.post('/rounds/:userId', /*#__PURE__*/function () {
           case 3:
             _context8.prev = 3;
             _context8.next = 6;
-            return User.update({
+            return User.updateOne({
               id: req.params.userId
             }, {
               $push: {

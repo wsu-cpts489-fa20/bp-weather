@@ -2,32 +2,34 @@ import React from 'react';
 import AppMode from './../AppMode.js';
 
 class RoundForm extends React.Component {
-    constructor(props) {
-        super(props);
-        //Create date object for today, taking time zone into consideration
-        let today = new Date(Date.now()-(new Date()).getTimezoneOffset()*60000);
-        //store date as ISO string
-        if (this.props.mode === AppMode.ROUNDS_LOGROUND) {
-            //If logging a new round, the starting state is a default round with
-            //today's date.
-            this.state = {date:  today.toISOString().substr(0,10), 
-                        course: "",
-                        type: "practice",
-                        holes: "18",
-                        strokes: 80,
-                        minutes: 50,
-                        seconds: "00",
-                        notes: "",
-                        faIcon: "fa fa-save",
-                        btnLabel: "Save Round Data"}
-        } else {
-            //if editing an existing round, the starting state is the round's
-            //current data
-            this.state = this.props.startData;
-            this.state.faIcon = "fa fa-edit";
-            this.state.btnLabel = "Update Round Data";
-        }
-    }
+  constructor(props) {
+  super(props);
+  //Create date object for today, taking time zone into consideration
+  let today = new Date(Date.now()-(new Date()).getTimezoneOffset()*60000);
+  //store date as ISO string
+  if (this.props.mode === AppMode.ROUNDS_LOGROUND) {
+    //If logging a new round, the starting state is a default round with
+    //today's date.
+    this.state = {date:  today.toISOString().substr(0,10), 
+                  course: "",
+                  type: "practice",
+                  holes: "18",
+                  strokes: 80,
+                  minutes: 50,
+                  seconds: "00",
+                  notes: "",
+                  faIcon: "fa fa-save",
+                  btnLabel: "Save Round Data"}
+  } else {
+    //if editing an existing round, the starting state is the round's
+    //current data
+    let thisRound = {...this.props.startData};
+    delete thisRound.id;
+    thisRound.faIcon = "fa fa-edit";
+    thisRound.btnLabel = "Update Round Data";
+    this.state = thisRound;
+  }
+}
   
   
     handleChange = (event) => {
@@ -129,7 +131,7 @@ class RoundForm extends React.Component {
           <p></p>
           <label>Speedgolf Score: <br></br>
               <input name="SGS" className="form-center" type="text" size="6" 
-                disabled={true} value={this.state.SGS} />
+                disabled={true} value={this.computeSGS(this.state.strokes,this.state.minutes,this.state.seconds)} />
           </label>
           <p></p>
           <label>Notes:

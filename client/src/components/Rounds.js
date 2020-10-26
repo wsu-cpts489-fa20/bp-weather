@@ -11,54 +11,85 @@ import FloatingButton from './FloatingButton.js';
 class Rounds extends React.Component {
 
     //Initialize a Rounds object based on local storage
-    constructor(props) {
-            super(props);
-            let data = JSON.parse(localStorage.getItem(this.props.userId)); 
-            if (data == null) { //no data yet for this user -- create empty record
-                data = {rounds: {},
-                        roundCount: 0};  
-                localStorage.setItem(this.props.userId,JSON.stringify(data));
-            }
-            this.state = {rounds: data.rounds,
-                          roundCount: data.roundCount,
-                          deleteId: "",
-                          editId: ""};           
-        }
+    constructor() {
+        super();
+        this.state = {deleteId: "",
+                      editId: ""};           
+    }
 
-    //addRound -- Given an object newData containing a new round, add the round
-    //to the current user's list of rounds, incremeting roundCount to ensure
-    //the round id is unique. Then commit to local storage and toggle
+    //componentDidMount -- After the component moutns, obtain current user's 
+    //rounds from the server and push them into component state
+    // componentDidMount = async () => {
+    //     let url = "/rounds/" + this.props.userObj.id;
+    //     let res = await fetch(url, {method: 'GET'});
+    //     if (res.status != 200) {
+    //         let msg = await res.text();
+    //         alert("There was an error obtaining rounds data for this user: " 
+    //         + msg);
+    //         return;
+    //     } 
+    //     let body = await res.json();
+    //     body = JSON.parse(body);
+    //     alert("in componentDidMount with GET results: " + body);
+    //     this.setState({rounds: body}, this.props.changeMode(AppMode.ROUNDS));
+    // }
+
+    //addRound -- Given an object newData containing a new round, use the 
+    //server POST route to add the new round to the database. If the add is
+    //successful, call on the refreshOnUpdate() method to force the parent
+    //App component to refresh its state from the database and re-render itself,
+    //allowing the change to be propagated to the Rounds table. Then switch
     //the mode back to AppMode.ROUNDS since the user is done adding a round.
-    addRound = (newData) => {
-        let data = JSON.parse(localStorage.getItem(this.props.userId));
-        data.rounds[++data.roundCount] = newData;
-        localStorage.setItem(this.props.userId, JSON.stringify(data));
-        this.setState({rounds: data.rounds, roundCount: data.roundCount});
-        this.props.changeMode(AppMode.ROUNDS);
+    addRound = async (newData) => {
+        const url = '/rounds/' + this.props.userObj.id;
+        const res = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            method: 'POST',
+            body: JSON.stringify(newData)}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            alert("An error occurred when attempting to add new round to database: "    
+            + msg);
+            this.props.changeMode(AppMode.ROUNDS);
+        } else {
+            this.props.refreshOnUpdate(AppMode.ROUNDS);
+        }
     }
 
     //editRound -- Given an object newData containing updated data on an
-    //existing round, update the current user's round uniquely identified by
-    //this.state.editId, commit to local storage, reset editId to empty and
+    //existing round, update the current user's round in the database. 
     //toggle the mode back to AppMode.ROUNDS since the user is done editing the
     //round. 
-    editRound = (newData) => {
-        let data = JSON.parse(localStorage.getItem(this.props.userId)); 
-        data.rounds[this.state.editId] = newData;
-        localStorage.setItem(this.props.userId, JSON.stringify(data));
-        this.setState({rounds: data.rounds, editId: ""});
-        this.props.changeMode(AppMode.ROUNDS);
+    editRound = async (newData) => {
+        const url = '/rounds/' + this.props.userObj.id + '/' + 
+            this.props.userObj.rounds[this.state.editId]._id;
+        const res = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            method: 'PUT',
+            body: JSON.stringify(newData)}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            alert("An error occurred when attempting to add new round to database: " 
+            + msg);
+            this.props.changeMode(AppMode.ROUNDS);
+        } else {
+            this.props.refreshOnUpdate(AppMode.ROUNDS);
+        }
     }
 
-    //deleteRound -- Delete the current user's round uniquely identified by
-    //this.state.deleteId, commit to local storage, and reset deleteId to empty.
-    deleteRound = () => {
-        let data = JSON.parse(localStorage.getItem(this.props.userId));
-        delete data.rounds[this.state.deleteId];
-        localStorage.setItem(this.props.userId,JSON.stringify(data));
-        this.setState({rounds: data.rounds, deleteId: ""});
-    }  
 
+    //deleteRound -- Delete the current user's round uniquely identified by
+    //this.state.deleteId, delete from the database, and reset deleteId to empty.
+    deleteRound = async () => {
+        //TO DO: Fill this in
+    }
+ 
     //setDeleteId -- Capture in this.state.deleteId the unique id of the item
     //the user is considering deleting.
     setDeleteId = (val) => {
@@ -80,12 +111,12 @@ class Rounds extends React.Component {
                 return (
                     <>
                     <RoundsTable 
-                    rounds={this.state.rounds}
-                    setEditId={this.setEditId}
-                    setDeleteId={this.setDeleteId}
-                    deleteRound={this.deleteRound}
-                    changeMode={this.props.changeMode}
-                    menuOpen={this.props.menuOpen} /> 
+                        rounds={this.props.userObj.rounds}
+                        setEditId={this.setEditId}
+                        setDeleteId={this.setDeleteId}
+                        deleteRound={this.deleteRound}
+                        changeMode={this.props.changeMode}
+                        menuOpen={this.props.menuOpen} /> 
                     <FloatingButton
                         handleClick={() => 
                         this.props.changeMode(AppMode.ROUNDS_LOGROUND)}
@@ -101,10 +132,16 @@ class Rounds extends React.Component {
                         saveRound={this.addRound} />
                 );
             case AppMode.ROUNDS_EDITROUND:
+                let thisRound = {...this.props.userObj.rounds[this.state.editId]};
+                thisRound.date = thisRound.date.substr(0,10);
+                if (thisRound.seconds < 10) {
+                    thisRound.seconds = "0" + thisRound.seconds;
+                } 
+                delete thisRound.SGS;
                 return (
                     <RoundForm
                         mode={this.props.mode}
-                        startData={this.state.rounds[this.state.editId]} 
+                        startData={thisRound} 
                         saveRound={this.editRound} />
                 );
         }

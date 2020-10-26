@@ -93,7 +93,8 @@ passport.use(new GithubStrategy({
         id: userId,
         displayName: profile.displayName,
         authStrategy: profile.provider,
-        profilePicURL: profile.photos[0].value
+        profilePicURL: profile.photos[0].value,
+        rounds: []
       }).save();
   }
   return done(null,currentUser);
@@ -368,7 +369,7 @@ app.post('/rounds/:userId', async (req, res, next) => {
       "Body must contain all 8 required fields: date, course, type, holes, strokes, "       +  "minutes, seconds, notes.");
   }
   try {
-    let status = await User.update(
+    let status = await User.updateOne(
     {id: req.params.userId},
     {$push: {rounds: req.body}});
     if (status.nModified != 1) { //Should never happen!
