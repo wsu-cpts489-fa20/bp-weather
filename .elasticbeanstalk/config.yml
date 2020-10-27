@@ -1,9 +1,9 @@
 branch-defaults:
   master:
-    environment: CodeCh18Eb-env
+    environment: null
     group_suffix: null
 environment-defaults:
-  CodeCh18Eb-env:
+  SpeedgolfMern-env:
     branch: null
     repository: null
 global:
@@ -11,7 +11,7 @@ global:
   branch: null
   default_ec2_keyname: null
   default_platform: Node.js 12 running on 64bit Amazon Linux 2
-  default_region: us-east-2
+  default_region: us-west-2
   include_git_submodules: true
   instance_profile: null
   platform_name: null

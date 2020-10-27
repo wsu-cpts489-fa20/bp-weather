@@ -25,7 +25,7 @@ const app = express();
 //////////////////////////////////////////////////////////////////////////
 import mongoose from 'mongoose';
 import { profileEnd } from 'console';
-const connectStr = 'mongodb://localhost:27017/appdb';
+const connectStr = 'mongodb+srv://dbAdmin:sN199LmblT96DwJm@speedgolf.r5sbt.mongodb.net/appdb';
 mongoose.connect(connectStr, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(
     () =>  {console.log(`Connected to ${connectStr}.`)},
