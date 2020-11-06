@@ -355,11 +355,10 @@ text-align: center;
     color: white;
   }
 
-.close {
-  color: white;
-  float: right;
+.modal-close {
   font-size: 28px;
   font-weight: bold;
+  float: right;
 }
 
 .close:hover,

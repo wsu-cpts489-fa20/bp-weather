@@ -3,6 +3,7 @@ This code base starts with the MERN stack MVP implmentation of the speedgolf
 app as it was deployed to MongoDB Atlas and AWS EB in Chapter 24. To that it adds
 some key features that were included as end-of-chapter exercises:
 
+* Ability to reset password using security question/answer
 * Ability to delete a speedgolf round
 * Ability to edit and delete a user account
 

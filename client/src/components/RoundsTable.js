@@ -1,7 +1,13 @@
 import React from 'react';
+import ConfirmDeleteBox from './ConfirmDeleteBox.js';
 import AppMode from './../AppMode.js';
 
 class RoundsTable extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {showConfirmDelete: false};
+  }
 
   //editRound -- Triggered when the user clicks the edit button for a given
   //round. The id param is the unique property that identifies the round.
@@ -13,16 +19,23 @@ class RoundsTable extends React.Component {
     this.props.changeMode(AppMode.ROUNDS_EDITROUND);
   }
 
+  //deleteRound -- Triggered when the user clicks on the "Yes, Delete"
+  //button in the Confirm Delete dialog box. It executes the deletion and
+  //closes the dialog box.
+  deleteRound = () => {
+    this.props.deleteRound();
+    this.setState({showConfirmDelete: false});
+  }
+
+
   //confirmDelete -- Triggered when the user clicks the delete button
   //for a given round. The id paam is the unique property that 
   //identifies the round. Set the state variable representing the id
   //of the round to be deleted and then present a dialog box asking
   //the user to confirm the deletion.
-  //TO DO: Implement the confirmation dialog box. For now, we
-  //present alert box placeholder
   confirmDelete = (id) => {
     this.props.setDeleteId(id);
-    alert("Confirm Delete Goes here!");
+    this.setState({showConfirmDelete: true});
   }
 
 
@@ -82,6 +95,10 @@ class RoundsTable extends React.Component {
           }
         </tbody>
       </table>
+      {this.state.showConfirmDelete ?
+        <ConfirmDeleteBox 
+          close={this.hideConfirmDeleteBox} 
+          deleteRound={this.deleteRound} /> : null}
     </div>
     );
   }

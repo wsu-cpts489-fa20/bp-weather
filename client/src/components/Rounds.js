@@ -13,26 +13,10 @@ class Rounds extends React.Component {
     //Initialize a Rounds object based on local storage
     constructor() {
         super();
-        this.state = {deleteId: "",
-                      editId: ""};           
+        this.deleteId = "";
+        this.editId = "";
+        this.state = {errorMsg: ""};           
     }
-
-    //componentDidMount -- After the component moutns, obtain current user's 
-    //rounds from the server and push them into component state
-    // componentDidMount = async () => {
-    //     let url = "/rounds/" + this.props.userObj.id;
-    //     let res = await fetch(url, {method: 'GET'});
-    //     if (res.status != 200) {
-    //         let msg = await res.text();
-    //         alert("There was an error obtaining rounds data for this user: " 
-    //         + msg);
-    //         return;
-    //     } 
-    //     let body = await res.json();
-    //     body = JSON.parse(body);
-    //     alert("in componentDidMount with GET results: " + body);
-    //     this.setState({rounds: body}, this.props.changeMode(AppMode.ROUNDS));
-    // }
 
     //addRound -- Given an object newData containing a new round, use the 
     //server POST route to add the new round to the database. If the add is
@@ -51,10 +35,11 @@ class Rounds extends React.Component {
             body: JSON.stringify(newData)}); 
         const msg = await res.text();
         if (res.status != 200) {
-            alert("An error occurred when attempting to add new round to database: "    
-            + msg);
+            this.setState({errorMsg: "An error occurred when attempting to delete round from database: " 
+            + msg});
             this.props.changeMode(AppMode.ROUNDS);
         } else {
+            this.setState({errorMsg: ""});
             this.props.refreshOnUpdate(AppMode.ROUNDS);
         }
     }
@@ -75,8 +60,8 @@ class Rounds extends React.Component {
             body: JSON.stringify(newData)}); 
         const msg = await res.text();
         if (res.status != 200) {
-            alert("An error occurred when attempting to add new round to database: " 
-            + msg);
+            this.setState({errorMsg: "An error occurred when attempting to upate round in database: " 
+            + msg});
             this.props.changeMode(AppMode.ROUNDS);
         } else {
             this.props.refreshOnUpdate(AppMode.ROUNDS);
@@ -87,19 +72,31 @@ class Rounds extends React.Component {
     //deleteRound -- Delete the current user's round uniquely identified by
     //this.state.deleteId, delete from the database, and reset deleteId to empty.
     deleteRound = async () => {
-        //TO DO: Fill this in
+        const url = '/rounds/' + this.props.userObj.id + '/' + 
+            this.props.userObj.rounds[this.deleteId]._id;
+        const res = await fetch(url, {method: 'DELETE'}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            this.setState({errorMsg: "An error occurred when attempting to delete round from database: " 
+            + msg});
+            this.props.changeMode(AppMode.ROUNDS);
+        } else {
+            this.props.refreshOnUpdate(AppMode.ROUNDS);
+        }  
     }
  
     //setDeleteId -- Capture in this.state.deleteId the unique id of the item
     //the user is considering deleting.
     setDeleteId = (val) => {
-        this.setState({deleteId: val});
+        this.deleteId = val;
+        this.setState({errorMsg: ""});
     }
 
     //setEditId -- Capture in this.state.editId the unique id of the item
     //the user is considering editing.
     setEditId = (val) => {
-        this.setState({editId: val});
+        this.editId = val;
+        this.setState({errorMsg: ""});
     }
     
     //render -- Conditionally render the Rounds mode page as either the rounds
@@ -110,6 +107,7 @@ class Rounds extends React.Component {
             case AppMode.ROUNDS:
                 return (
                     <>
+                    {this.state.errorMsg != "" ? <p className="emphasis">{this.state.errorMsg}</p> : null}
                     <RoundsTable 
                         rounds={this.props.userObj.rounds}
                         setEditId={this.setEditId}
