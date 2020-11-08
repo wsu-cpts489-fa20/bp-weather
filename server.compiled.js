@@ -16,8 +16,6 @@ var _express = _interopRequireDefault(require("express"));
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
 
-var _console = require("console");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -30,6 +28,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+require('dotenv').config();
+
 var LOCAL_PORT = 8081;
 var DEPLOY_URL = "http://localhost:8081";
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
@@ -41,7 +41,7 @@ var app = (0, _express["default"])(); //////////////////////////////////////////
 //using the mongoose library.
 //////////////////////////////////////////////////////////////////////////
 
-var connectStr = 'mongodb+srv://dbAdmin:sN199LmblT96DwJm@speedgolf.r5sbt.mongodb.net/appdb';
+var connectStr = process.env.MONGO_STR;
 
 _mongoose["default"].connect(connectStr, {
   useNewUrlParser: true,
@@ -136,8 +136,8 @@ var User = _mongoose["default"].model("User", userSchema); /////////////////////
 
 
 _passport["default"].use(new GithubStrategy({
-  clientID: "a075012c4b08543f42a8",
-  clientSecret: "8dde6978090028aee37c72df9ea7ce268678b6d3",
+  clientID: process.env.GH_CLIENT_ID,
+  clientSecret: process.env.GH_CLIENT_SECRET,
   callbackURL: DEPLOY_URL + "/auth/github/callback"
 },
 /*#__PURE__*/

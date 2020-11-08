@@ -1,5 +1,5 @@
 import React from 'react';
-import CreateAccountDialog from './CreateAccountDialog.js';
+import CreateEditAccountDialog from './CreateEditAccountDialog.js';
 import ResetPasswordDialog from './ResetPasswordDialog.js';
 import LookUpAccountDialog from './LookUpAccountDialog.js';
 import SecurityQuestionDialog from './SecurityQuestionDialog.js';
@@ -23,6 +23,7 @@ constructor() {
                   githubIcon: "fa fa-github",
                   githubLabel: "Sign in with GitHub",
                   loginMsg: "",
+                  newAccountCreated: false
                   };
 } 
     
@@ -45,14 +46,14 @@ handleLoginSubmit = async (event) => {
       const resText = await res.text();
       this.setState({loginBtnIcon: "fa fa-sign-in",
                      loginBtnLabel: "Log In",
-                     loginMsg: resText});
+                     statusMsg: resText});
     }
 }
 
-  //accountCreateStatus -- Called by child CreateAccountDialog component when 
+  //accountCreateDone -- Called by child CreateAccountDialog component when 
   //user attempted to create new account. Hide the dialog and display 
   //a message indicating result of the attempt.
-  accountCreateStatus = (msg) => {
+  accountCreateDone = (msg) => {
       this.setState({statusMsg: msg,
                      showCreateAccountDialog: false});
   }
@@ -133,11 +134,30 @@ resetPassword = async(pw) => {
     
 }
 
+//newAccountCreated -- Called after successful creation of a new account
+accountCreateDone = (msg,deleted) => {
+    this.setState({statusMsg: msg,
+                   showCreateAccountDialog: false});
+}
+
+//closeStatusMsg -- Called when user clicks on "x" to dismiss status message
+closeStatusMsg = () => {
+    this.setState({statusMsg: ""});
+}
+
+//cancelCreateAccount -- called to hide Create Account dialog without creating acct
+cancelCreateAccount = () => {
+    this.setState({showCreateAccountDialog: false});
+}
+
   render() {
     return(
-        <div id="login-mode-div" className="padded-page">
+        <div>
         <center>
-            <h1 />
+        {this.state.statusMsg != "" ? <div className="status-msg"><span>{this.state.statusMsg}</span>
+                       <button className="modal-close" onClick={this.closeStatusMsg}>
+                          <span className="fa fa-times"></span>
+                        </button></div>: null}
             {this.state.showLookUpAccountDialog ? 
               <LookUpAccountDialog cancelResetPassword={this.cancelResetPassword}
                                    getSecurityAnswer={this.getSecurityAnswer}/> : null}
@@ -149,8 +169,6 @@ resetPassword = async(pw) => {
             {this.state.showResetPaswordDialog ? 
               <ResetPasswordDialog cancelResetPassword={this.cancelResetPassword}
                                    resetPassword={this.resetPassword} /> : null}
-            {this.state.statusMsg != "" ? <p className="emphasis">{this.state.statusMsg}</p> : null}
-            {this.state.loginMsg != "" ? <p className="emphasis">{this.state.loginMsg}</p> : null}
             <form id="loginInterface" onSubmit={this.handleLoginSubmit}>
             <label htmlFor="emailInput" style={{ padding: 0, fontSize: 24 }}>
                 Email:
@@ -201,9 +219,10 @@ resetPassword = async(pw) => {
             </p>
             </form>
             {this.state.showCreateAccountDialog ? 
-              <CreateAccountDialog 
-                accountCreateStatus={this.accountCreateStatus}
-                cancelCreateAccount={this.cancelCreateAccount} /> : null}
+              <CreateEditAccountDialog
+                create={true} 
+                done={this.accountCreateDone}
+                cancel={this.cancelCreateAccount} /> : null}
             {this.state.showResetPasswordDialog ? <ResetPasswordDialog /> : null}
         </center>
         </div>

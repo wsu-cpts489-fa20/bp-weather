@@ -337,7 +337,6 @@ text-align: center;
   background-color: #fefefe;
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
-  border: 1px solid #888;
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
@@ -347,18 +346,24 @@ text-align: center;
     color: white;
   }
   
-  .modal-body {padding: 2px 16px;}
+  .modal-body {padding-top: 12px;
+               padding-bottom: 12px;
+               text-align: center;
+              }
   
   .modal-footer {
-    padding: 2px 16px;
-    background-color: black;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 
 .modal-close {
-  font-size: 28px;
-  font-weight: bold;
+  border: none;
   float: right;
+  height:100%;
+  background-color: lightgray;
 }
 
 .close:hover,
@@ -373,7 +378,9 @@ text-align: center;
   font-size: 24px;
   }
 
-  .emphasis {
+  .status-msg {
+    padding-top: 6px;
+    padding-bottom: 6px;
     color: black;
     background-color: lightgray;
   }

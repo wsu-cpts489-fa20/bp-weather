@@ -35,8 +35,7 @@ class Rounds extends React.Component {
             body: JSON.stringify(newData)}); 
         const msg = await res.text();
         if (res.status != 200) {
-            this.setState({errorMsg: "An error occurred when attempting to delete round from database: " 
-            + msg});
+            this.setState({errorMsg: msg});
             this.props.changeMode(AppMode.ROUNDS);
         } else {
             this.setState({errorMsg: ""});
@@ -50,7 +49,7 @@ class Rounds extends React.Component {
     //round. 
     editRound = async (newData) => {
         const url = '/rounds/' + this.props.userObj.id + '/' + 
-            this.props.userObj.rounds[this.state.editId]._id;
+            this.props.userObj.rounds[this.editId]._id;
         const res = await fetch(url, {
             headers: {
                 'Accept': 'application/json',
@@ -60,8 +59,7 @@ class Rounds extends React.Component {
             body: JSON.stringify(newData)}); 
         const msg = await res.text();
         if (res.status != 200) {
-            this.setState({errorMsg: "An error occurred when attempting to upate round in database: " 
-            + msg});
+            this.setState({errorMsg: msg});
             this.props.changeMode(AppMode.ROUNDS);
         } else {
             this.props.refreshOnUpdate(AppMode.ROUNDS);
@@ -98,6 +96,10 @@ class Rounds extends React.Component {
         this.editId = val;
         this.setState({errorMsg: ""});
     }
+
+    closeErrorMsg = () => {
+        this.setState({errorMsg: ""});
+    }
     
     //render -- Conditionally render the Rounds mode page as either the rounds
     //table, the rounds form set to obtain a new round, or the rounds form set
@@ -107,7 +109,10 @@ class Rounds extends React.Component {
             case AppMode.ROUNDS:
                 return (
                     <>
-                    {this.state.errorMsg != "" ? <p className="emphasis">{this.state.errorMsg}</p> : null}
+                    {this.state.errorMsg != "" ? <div className="status-msg"><span>{this.state.errorMsg}</span>
+                       <button className="modal-close" onClick={this.closeErrorMsg}>
+                          <span className="fa fa-times"></span>
+                        </button></div>: null}
                     <RoundsTable 
                         rounds={this.props.userObj.rounds}
                         setEditId={this.setEditId}
@@ -130,7 +135,7 @@ class Rounds extends React.Component {
                         saveRound={this.addRound} />
                 );
             case AppMode.ROUNDS_EDITROUND:
-                let thisRound = {...this.props.userObj.rounds[this.state.editId]};
+                let thisRound = {...this.props.userObj.rounds[this.editId]};
                 thisRound.date = thisRound.date.substr(0,10);
                 if (thisRound.seconds < 10) {
                     thisRound.seconds = "0" + thisRound.seconds;

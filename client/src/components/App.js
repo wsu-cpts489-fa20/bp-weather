@@ -2,12 +2,13 @@ import React from 'react';
 import NavBar from './NavBar.js';
 import SideMenu from './SideMenu.js';
 import ModeBar from './ModeBar.js';
-import FloatingButton from './FloatingButton.js';
+import CreateEditAccountDialog from './CreateEditAccountDialog.js'
 import LoginPage from './LoginPage.js';
 import AppMode from "./../AppMode.js"
 import FeedPage from './FeedPage.js';
 import Rounds from './Rounds.js';
 import CoursesPage from './CoursesPage.js';
+import AboutBox from './AboutBox.js';
 
 const modeTitle = {};
 modeTitle[AppMode.LOGIN] = "Welcome to SpeedScore";
@@ -34,6 +35,10 @@ class App extends React.Component {
                   menuOpen: false,
                   authenticated: false,
                   userObj: {displayName: "", profilePicURL: ""},
+                  editAccount: false,
+                  showEditAccountDialog: false,
+                  statusMsg: "",
+                  showAboutDialog: false
                  };
   }
 
@@ -94,11 +99,50 @@ class App extends React.Component {
                    authenticated: true});
   }
 
+  showEditAccount = () => {
+    this.setState({showEditAccountDialog: true});
+
+  }
+
+  cancelEditAccount = () => {
+    this.setState({showEditAccountDialog: false});
+  }
+
+  //editAccountDone -- called after successful edit or
+  //deletion of user account. msg contains the status
+  //message and deleted indicates whether an account was
+  //edited (deleted == false) or deleted (deleted == true)
+  editAccountDone = (msg, deleted) => {
+    if (deleted) {
+      this.setState({showEditAccountDialog: false,
+                     statusMsg: msg,
+                     mode: AppMode.LOGIN});
+      } else {
+        this.setState({showEditAccountDialog: false,
+          statusMsg: msg});
+      }
+  }
+
+  closeStatusMsg = () => {
+    this.setState({statusMsg: ""});
+  }
 
   render() {
     const ModePage = modeToPage[this.state.mode];
     return (
-      <div>
+      <div className="padded-page">
+        {this.state.showAboutDialog ? 
+          <AboutBox close={() => this.setState({showAboutDialog: false})}/> : null}
+        {this.state.statusMsg != "" ? <div className="status-msg">
+              <span>{this.state.statusMsg}</span>
+              <button className="modal-close" onClick={this.closeStatusMsg}>
+                  <span className="fa fa-times"></span></button></div> : null}
+        {this.state.showEditAccountDialog ? 
+            <CreateEditAccountDialog 
+              create={false} 
+              userId={this.state.userObj.id} 
+              done={this.editAccountDone} 
+              cancel={this.cancelEditAccount}/> : null}
         <NavBar 
           title={modeTitle[this.state.mode]} 
           mode={this.state.mode}
@@ -111,7 +155,10 @@ class App extends React.Component {
             toggleMenuOpen={this.toggleMenuOpen}
             displayName={this.state.userObj.displayName}
             profilePicURL={this.state.userObj.profilePicURL}
-            logOut={() => this.handleChangeMode(AppMode.LOGIN)}/>
+            localAccount={this.state.userObj.authStrategy === "local"}
+            editAccount={this.showEditAccount}
+            logOut={() => this.handleChangeMode(AppMode.LOGIN)}
+            showAbout={() => {this.setState({showAboutDialog: true})}}/>
           <ModeBar 
             mode={this.state.mode} 
             changeMode={this.handleChangeMode}

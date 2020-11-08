@@ -1,5 +1,5 @@
 import React from 'react';
-import ConfirmDeleteBox from './ConfirmDeleteBox.js';
+import ConfirmDeleteRound from './ConfirmDeleteRound.js';
 import AppMode from './../AppMode.js';
 
 class RoundsTable extends React.Component {
@@ -96,8 +96,8 @@ class RoundsTable extends React.Component {
         </tbody>
       </table>
       {this.state.showConfirmDelete ?
-        <ConfirmDeleteBox 
-          close={this.hideConfirmDeleteBox} 
+        <ConfirmDeleteRound 
+          close={() => this.setState({showConfirmDelete: false})} 
           deleteRound={this.deleteRound} /> : null}
     </div>
     );

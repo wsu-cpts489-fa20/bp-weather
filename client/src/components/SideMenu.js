@@ -54,7 +54,10 @@ renderModeMenuItems = () => {
           {/* MENU CONTENT */}
           {this.renderModeMenuItems()}
           {/* The following menu items are present regardless of mode */}
-          <a id="aboutBtn" className="sidemenu-item">
+          {this.props.localAccount ? 
+            <a id="accountBtn" className="sidemenu-item" onClick={this.props.editAccount}>
+              <span className="fa fa-user"></span>&nbsp;Account</a> : null}
+          <a id="aboutBtn" className="sidemenu-item" onClick={this.props.showAbout}>
             <span className="fa fa-info-circle"></span>&nbsp;About</a>
           <a id="logOutBtn" className="sidemenu-item" onClick={this.props.logOut}>
             <span className="fa fa-sign-out-alt"></span>&nbsp;Log Out</a>
