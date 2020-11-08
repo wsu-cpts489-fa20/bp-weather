@@ -20,5 +20,8 @@ OAuth providers to the .env file. Here's an example for GitHub:
 GH_CLIENT_ID='<CLIENT ID INSIDE QUOTES>'
 GH_CLIENT_SECRET='<CLIENT SECRET INSIDE QUOTES>'
 
+Make sure to add .env to your .gitignore file so that your secrets aren't
+stored in your GitHub repo!
+
 The app is presently set be served to http://localhost:8081 through the command
 npm run dev. You'll need to update DEPLOY_URL in server.js for remote deployment.
