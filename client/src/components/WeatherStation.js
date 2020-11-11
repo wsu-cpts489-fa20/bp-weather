@@ -2,8 +2,10 @@
 //parent: WeatherFeed
 //child: none
 import React from 'react';
+require('dotenv').config();
 
 class WeatherStation extends React.Component {
+    
     
     constructor(props) {
         super(props);
@@ -11,6 +13,8 @@ class WeatherStation extends React.Component {
                       longitude: this.props.longitude,
                       
                      };
+
+        
       }
 
     componentDidMount = () => {
@@ -24,7 +28,7 @@ class WeatherStation extends React.Component {
             console.log("lat now fetching: " + this.state.latitude + " long now fetching: " + this.state.longitude);
             const response = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + 
             this.state.latitude + '&lon=' +
-            this.state.longitude + '&appid=ec73e0c69ee570aa0120006017f7af90');
+            this.state.longitude + '&appid=' + process.env.REACT_APP_API_KEY);
             const currWeather = await response.json();
             this.setState({place: currWeather.name,
     

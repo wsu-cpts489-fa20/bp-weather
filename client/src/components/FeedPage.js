@@ -47,10 +47,11 @@ class FeedPage extends React.Component {
    //addStation -- When user clicks on "+" button to add a new weather station,
     //prompt the user for the location and attempt to add the requested station.
     addStation = async() => {
+        
         const newStation = prompt("Enter a City, State, and Country:");
         if (newStation != null) { //Need to see if we can find the station through the API 
           const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' + 
-              newStation +  '&appid=98cb8d2538da248784d8e1c1f9332ea9');
+              newStation +  '&appid=' + process.env.REACT_APP_API_KEY);
           const stationData = await response.json();
           //See if the requested station exists
           if (stationData != null && stationData.hasOwnProperty('coord')) { 
