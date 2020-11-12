@@ -23,7 +23,7 @@ class ModeBar extends React.Component {
         <a className={(this.props.mode === AppMode.COURSES ? " item-selected" : null)}
           onClick={()=>this.props.changeMode(AppMode.COURSES)}>
           <span className="modebar-icon  fa fa-flag"></span>
-          <span className="modebar-text">Courses</span>
+          <span className="modebar-text">Weather History</span>
         </a> 
         </div>
       );
