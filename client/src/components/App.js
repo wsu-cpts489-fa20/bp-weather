@@ -13,7 +13,7 @@ import AboutBox from './AboutBox.js';
 const modeTitle = {};
 modeTitle[AppMode.LOGIN] = "Welcome to SpeedScore";
 modeTitle[AppMode.FEED] = "Activity Feed";
-modeTitle[AppMode.ROUNDS] = "My Rounds";
+modeTitle[AppMode.ROUNDS] = "My Favorites";
 modeTitle[AppMode.ROUNDS_LOGROUND] = "Log New Round";
 modeTitle[AppMode.ROUNDS_EDITROUND] = "Edit Round";
 modeTitle[AppMode.COURSES] = "Courses";
