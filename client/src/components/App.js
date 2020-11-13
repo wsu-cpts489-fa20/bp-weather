@@ -11,12 +11,14 @@ import CoursesPage from './CoursesPage.js';
 import AboutBox from './AboutBox.js';
 
 const modeTitle = {};
+
 modeTitle[AppMode.LOGIN] = "Welcome to Some Weather App";
 modeTitle[AppMode.FEED] = "Search";
 modeTitle[AppMode.ROUNDS] = "Favorites";
 modeTitle[AppMode.ROUNDS_LOGROUND] = "New Favorite";
 modeTitle[AppMode.ROUNDS_EDITROUND] = "Edit Favorites";
 modeTitle[AppMode.COURSES] = "Weather History";
+
 
 const modeToPage = {};
 modeToPage[AppMode.LOGIN] = LoginPage;
