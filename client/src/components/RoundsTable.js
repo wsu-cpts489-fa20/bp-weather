@@ -81,9 +81,12 @@ class RoundsTable extends React.Component {
         <thead className="thead-light">
         <tr>
           <th>Date</th>
-          <th>Course</th>
-          <th>Score</th>
-          <th>View/Edit...</th>
+          <th>Location</th>
+          <th>Weather Condition</th>
+          <th>Temperature</th>
+          <th>Wind Speed</th>
+          <th>Humidity</th>
+          {/* <th>View/Edit...</th> */}
           <th>Delete</th>
         </tr>
         </thead>
