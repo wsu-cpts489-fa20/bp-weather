@@ -190,6 +190,7 @@ cancelCreateAccount = () => {
                 className="form-control login-text"
                 type="password"
                 placeholder="Enter Password"
+                id="passwordInput"
                 pattern="[A-Za-z0-9!@#$%^&*()_+\-]+"
                 required={true}
                 />

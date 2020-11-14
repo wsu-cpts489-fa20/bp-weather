@@ -9,7 +9,7 @@ class ModeBar extends React.Component {
           " invisible" : (this.props.menuOpen ? " ignore-click visible" : " visible"))}>
         <a className={(this.props.mode === AppMode.FEED ? " item-selected" : null)}
             onClick={()=>this.props.changeMode(AppMode.FEED)}>
-          <span className="modebaricon fa fa-search"></span>
+          <span className="modebaricon fa fa-search" id="searchTab"></span>
           <span className="modebar-text">Search Location</span>
         </a>
         <a className={(this.props.mode === AppMode.ROUNDS || 
@@ -17,12 +17,12 @@ class ModeBar extends React.Component {
                this.props.mode === AppMode.ROUNDS_LOGROUND ? 
                   " item-selected" : null)}
            onClick={()=>this.props.changeMode(AppMode.ROUNDS)}>
-          <span className="modebar-icon  fa fa-heart"></span>
+          <span className="modebar-icon fa fa-heart" id="favoritesTab"></span>
           <span className="modebar-text">Favorites</span>
         </a>
         <a className={(this.props.mode === AppMode.COURSES ? " item-selected" : null)}
           onClick={()=>this.props.changeMode(AppMode.COURSES)}>
-          <span className="modebar-icon  fa fa-flag"></span>
+          <span className="modebar-icon  fa fa-flag" id="historyTab"></span>
           <span className="modebar-text">Weather History</span>
         </a> 
         </div>
