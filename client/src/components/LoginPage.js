@@ -41,6 +41,10 @@ handleLoginSubmit = async (event) => {
                    loginBtnLabel: "Logging In..."});
     const url = "auth/login?username=" + this.emailInputRef.current.value +
                 "&password=" + this.passwordInputRef.current.value;
+
+    console.log("user: " + this.emailInputRef.current.value);
+    console.log("pass: " + this.passwordInputRef.current.value);
+
     const res = await fetch(url, {method: 'POST'}); 
     if (res.status == 200) { //successful login!
         window.open("/","_self");
@@ -91,6 +95,23 @@ handleOAuthLoginClick = (provider) => {
    this.setState({[provider + "Icon"] : "fa fa-spin fa-spinner",
                   [provider + "Label"] : "Connecting..."});
    setTimeout(() => this.handleOAuthLogin(provider),1000);
+}
+
+handleGuestLoginClick = async (event) => {
+    event.preventDefault();
+    this.setState({loginBtnIcon: "fa fa-spin fa-spinner",
+                   loginBtnLabel: "Logging In..."});
+    const url = "auth/login?username=" + "guest@mail.com" +
+                "&password=" + "Guest123123";
+    const res = await fetch(url, {method: 'POST'}); 
+    if (res.status == 200) { //successful login!
+        window.open("/","_self");
+    } else { //Unsuccessful login
+      const resText = await res.text();
+      this.setState({loginBtnIcon: "fa fa-sign-in",
+                     loginBtnLabel: "Log In",
+                     statusMsg: resText});
+    }
 }
 
 //getSecurityAnswer: Given the id, security question, and security answer obtained
@@ -219,7 +240,7 @@ cancelCreateAccount = () => {
             </button>
 
             <button type="button" className="btn btn-github"
-               onClick={null}>
+               onClick={this.handleGuestLoginClick}>
               <span className={this.state.guestIcon}></span>&nbsp;
                 {this.state.guestLabel}
             </button>
