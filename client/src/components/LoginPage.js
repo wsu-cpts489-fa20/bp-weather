@@ -22,6 +22,8 @@ constructor() {
                   showResetPaswordDialog: false,
                   githubIcon: "fa fa-github",
                   githubLabel: "Sign in with GitHub",
+                  guestLabel: "Sign in as guest",
+                  guestIcon: "fa fa-user-alt",
                   loginMsg: "",
                   newAccountCreated: false
                   };
@@ -215,6 +217,13 @@ cancelCreateAccount = () => {
               <span className={this.state.githubIcon}></span>&nbsp;
                 {this.state.githubLabel}
             </button>
+
+            <button type="button" className="btn btn-github"
+               onClick={null}>
+              <span className={this.state.guestIcon}></span>&nbsp;
+                {this.state.guestLabel}
+            </button>
+
             <p>
                 <i>Version CptS 489</i>
             </p>
