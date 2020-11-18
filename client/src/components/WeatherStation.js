@@ -30,6 +30,8 @@ class WeatherStation extends React.Component {
             this.state.latitude + '&lon=' +
             this.state.longitude + '&appid=' + process.env.REACT_APP_API_KEY);
             const currWeather = await response.json();
+
+    
             this.setState({place: currWeather.name,
     
                          retrieved: (new Date()).toLocaleDateString() + " at " + (new Date()).toLocaleTimeString(),
@@ -44,7 +46,8 @@ class WeatherStation extends React.Component {
                          windUnit: "Meters/sec",
                          windDirection: currWeather.wind.deg,
                          windDirectionUnit: "Degrees",
-                         units: "Metric"
+                         units: "Metric",
+                         weatherIcon: "http://openweathermap.org/img/wn/10d@2x.png"
                          });
 
 
@@ -86,26 +89,36 @@ class WeatherStation extends React.Component {
 
             {/* Delete icon */}
             <span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span>
-            <h2>Weather Conditions at {this.state.place} </h2>
+
+            <div class="weatherStation">
+                
+                <h2>Weather Conditions at {this.state.place} </h2>
 
 
-            <h6><i>Last updated: {this.state.retrieved}</i>
-            {/* Refresh icon */}
-            &nbsp; <span className="refresh-icon fa fa-retweet"
-            onClick={() => this.getCurrentObservations()}></span> 
-            </h6>
+                <h6><i>Last updated: {this.state.retrieved}</i>
+                {/* Refresh icon */}
+                &nbsp; <span className="refresh-icon fa fa-retweet"
+                onClick={() => this.getCurrentObservations()}></span> 
+                </h6>
 
-            <h5>Conditions: {this.state.conditions}</h5>
-            <h5>Visibility: {this.state.visibility + " " + this.state.visibilityUnit}</h5>
-            <h5>Temp: {this.state.temp}&deg;&nbsp;{this.state.tempUnit}</h5>
-            <h5>Humidity: {this.state.humidity}%</h5>
-            <h5>Wind Speed: {this.state.wind + " " + this.state.windUnit}</h5>
-            <h5>Wind Direction: {this.state.windDirection + " " + this.state.windDirectionUnit}</h5>
-            <div className="custom-control custom-switch">
-                <input type="checkbox" className="custom-control-input" id={"switch-" + this.props.stationId} 
-                     onClick={this.toggleUnits} />
-                <label className="custom-control-label" htmlFor={"switch-" + this.props.stationId}>&nbsp;{this.state.units}</label>
+                <img src= {this.state.weatherIcon} alt="weatherIcon"/>
+                <h5>Conditions: {this.state.conditions}</h5>
+                <h5>Visibility: {this.state.visibility + " " + this.state.visibilityUnit}</h5>
+                <h5>Temp: {this.state.temp}&deg;&nbsp;{this.state.tempUnit}</h5>
+                <h5>Humidity: {this.state.humidity}%</h5>
+                <h5>Wind Speed: {this.state.wind + " " + this.state.windUnit}</h5>
+                <h5>Wind Direction: {this.state.windDirection + " " + this.state.windDirectionUnit}</h5>
+                <div className="custom-control custom-switch">
+                    <input type="checkbox" className="custom-control-input" id={"switch-" + this.props.stationId} 
+                        onClick={this.toggleUnits} />
+                    <label className="custom-control-label" htmlFor={"switch-" + this.props.stationId}>&nbsp;{this.state.units}</label>
+                </div>
             </div>
+
+
+            {/* image */}
+            
+            
 
              {/* shift down icon */}
              <span className="shift-icon fa fa-arrow-down" onClick={() => this.props.moveStation(this.props.stationId, "down")}></span>

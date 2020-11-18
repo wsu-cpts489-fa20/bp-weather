@@ -386,3 +386,13 @@ text-align: center;
     color: black;
     background-color: lightgray;
   }
+
+  .weatherStation {
+    position: relative;
+  }
+
+
+  .jumbotron{
+    background-color:#D0D3D5;
+    text-align:center;
+}
