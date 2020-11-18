@@ -63,7 +63,7 @@ class FeedPage extends React.Component {
 
             
             this.setState({stations: newStations,
-                             stationCount: this.state.stationCount + 1}, () => {
+                           stationCount: this.state.stationCount + 1}, () => {
                                 this.writeStations(this.state.stationCount, stationData.coord.lat, stationData.coord.lon);
                              });
                 
@@ -75,21 +75,21 @@ class FeedPage extends React.Component {
 
     //save the stations to localstorage
     writeStations(ids, lats, longs) {
-        let thisUser = localStorage.getItem("userId");
-        let data = JSON.parse(localStorage.getItem(thisUser));
+        let data = JSON.parse(localStorage.getItem("guest@mail.com"));
         
         //Initialize empty JavaScript object to store new or updated station
         let thisStation = {}; //iniitalize empty object for this station
 
+        
         for (let i = 0; i < ids.length; i++) {
             //Store the data
-            thisStation.id = ids[i];
+            thisStation.id = i + 1;
             thisStation.latitude = lats[i];
             thisStation.longitude = longs[i];
 
             data.weatherStations[i + 1] = thisStation;
             data.weatherStationCount = ids.length;
-            localStorage.setItem(thisUser,JSON.stringify(data));
+            localStorage.setItem("guest@mail.com", JSON.stringify(data));
             thisStation = {};
         }  
     }
@@ -164,10 +164,7 @@ class FeedPage extends React.Component {
 
     //load stations from localstorage into array of weather stations
     loadStations() {
-        
-
-        let thisUser = localStorage.getItem("userId");
-        let data = JSON.parse(localStorage.getItem(thisUser));
+        let data = JSON.parse(localStorage.getItem("guest@mail.com"));
 
         //check if null if first time logging in
         if (data != null) {
@@ -219,9 +216,9 @@ class FeedPage extends React.Component {
        
 
         
-        if (this.state.initialFire == false) {
+        if (this.state.stations.length >= 1) {
 
-            let thisUser = localStorage.getItem("userId");
+            let thisUser = localStorage.getItem("guest@mail.com");
             let data = JSON.parse(localStorage.getItem(thisUser));
 
             //set to null and resave to make things easier

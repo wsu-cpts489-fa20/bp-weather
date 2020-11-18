@@ -52,10 +52,13 @@ class App extends React.Component {
         .then((response) => response.json())
         .then((obj) => {
           if (obj.isAuthenticated) {
+           
             this.setState({
               userObj: obj.user,
               authenticated: true,
               mode: AppMode.FEED //We're authenticated so can get into the app.
+            }, () => {
+              this.createLocalStorageForGuest();
             });
           }
         }
@@ -77,6 +80,28 @@ class App extends React.Component {
       userObj: obj,
       mode: newMode
     });
+  }
+
+  createLocalStorageForGuest = () => {
+    
+    var id = this.state.userObj.id
+    if (id == "guest@mail.com") {
+      localStorage.setItem("userId", id);
+
+      //Check whether we have saved data on this SpeedScore user:
+      let data = localStorage.getItem(id);
+      if (data == null) { 
+          localStorage.setItem(id, JSON.stringify({"weatherStations" : {}, "weatherStationCount": 0}));  
+          this.setState({hasSavedStations: false});
+          
+      } 
+      else {
+          this.setState({hasSavedStations: true}, () => {
+              console.log("Has data!!");
+          });
+      }
+    }
+    
   }
 
 
@@ -158,6 +183,7 @@ class App extends React.Component {
             displayName={this.state.userObj.displayName}
             profilePicURL={this.state.userObj.profilePicURL}
             localAccount={this.state.userObj.authStrategy === "local"}
+            userObj={this.state.userObj}
             editAccount={this.showEditAccount}
             logOut={() => this.handleChangeMode(AppMode.LOGIN)}
             showAbout={() => {this.setState({showAboutDialog: true})}}/>
