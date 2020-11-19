@@ -239,7 +239,7 @@ cancelCreateAccount = () => {
                 {this.state.githubLabel}
             </button>
 
-            <button type="button" className="btn btn-github"
+            <button id="guest-login-btn" type="button" className="btn btn-github"
                onClick={this.handleGuestLoginClick}>
               <span className={this.state.guestIcon}></span>&nbsp;
                 {this.state.guestLabel}

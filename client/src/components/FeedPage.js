@@ -236,9 +236,9 @@ class FeedPage extends React.Component {
                 <div id="weatherStations">
                     {rows}
                 </div>
-                <div className="floatButton" id="floatBtnDiv">
-                    <a className="float" id="addStationBtn" onClick={this.addStation}>
-                        <span className="float-btn-icon fa fa-plus" id="floatBtnIcon"></span>
+                <div  className="floatButton" id="floatBtnDiv">
+                    <a  id="addFloatButton" className="float" id="addStationBtn" onClick={this.addStation}>
+                        <span  className="float-btn-icon fa fa-plus" id="floatBtnIcon"></span>
                     </a>
                 </div>  
             </div>
