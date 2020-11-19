@@ -83,9 +83,11 @@ class RoundsTable extends React.Component {
           <th>Date</th>
           <th>Location</th>
           <th>Weather Condition</th>
+          <th>Visibility</th>
           <th>Temperature</th>
-          <th>Wind Speed</th>
           <th>Humidity</th>
+          <th>Wind Speed</th>
+          <th>Wind Direction</th>
           {/* <th>View/Edit...</th> */}
           <th>Delete</th>
         </tr>
