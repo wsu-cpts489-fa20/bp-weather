@@ -1,11 +1,16 @@
-# Final Speedgolf App
-This code base starts with the MERN stack MVP implmentation of the speedgolf
-app as it was deployed to MongoDB Atlas and AWS EB in Chapter 24. To that it adds
-some key features that were included as end-of-chapter exercises:
+# BP Weather App
 
-* Ability to reset password using security question/answer
-* Ability to delete a speedgolf round
+The idea is to build a comprehensive and highly customizable weather app. Besides designating “favorites” and obtaining current weather data from those favorites, the app should provide the option to view weather history for a given location, and to customize what data to show and how to show it. Numerous other customizations, including color schemes, units, and refresh frequency, should also be available through an options page.
+
+* Ability to sign in as a guest 
+* Ability to sign in with GitHub 
+* Ability to add weather stations
+* Ability to delete weather stations
 * Ability to edit and delete a user account
+
+Week 2
+* FeedPage.js
+* LoginPage.js
 
 This repo serves as the starting code for all of the CptS 489 project teams in the
 Fa20 semester. It will be pushed to their repos, deployed to their instances on

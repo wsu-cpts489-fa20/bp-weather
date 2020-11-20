@@ -12,6 +12,11 @@ class ModeBar extends React.Component {
           <span className="modebaricon fa fa-search" id="searchTab"></span>
           <span className="modebar-text">Search Location</span>
         </a>
+        <a className={(this.props.mode === AppMode.COURSES ? " item-selected" : null)}
+          onClick={()=>this.props.changeMode(AppMode.COURSES)}>
+          <span className="modebar-icon  fa fa-heart" id="historyTab"></span>
+          <span className="modebar-text">Favorites</span>
+        </a> 
         <a className={(this.props.mode === AppMode.ROUNDS || 
                this.props.mode === AppMode.ROUNDS_EDITROUND || 
                this.props.mode === AppMode.ROUNDS_LOGROUND ? 
