@@ -185,7 +185,7 @@ class App extends React.Component {
             localAccount={this.state.userObj.authStrategy === "local"}
             userObj={this.state.userObj}
             editAccount={this.showEditAccount}
-            logOut={() => this.handleChangeMode(AppMode.LOGIN)}
+            logOut={() => {this.handleChangeMode(AppMode.LOGIN); localStorage.setItem("userId", null)}}
             showAbout={() => {this.setState({showAboutDialog: true})}}/>
           <ModeBar 
             mode={this.state.mode} 
