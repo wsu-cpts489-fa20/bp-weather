@@ -387,8 +387,8 @@ text-align: center;
 
   input[type=newLocation] {
     width: 250px;
-    -webkit-transition: width 0.4s ease-in-out;
-    transition: width 0.4s ease-in-out;
+    -webkit-transition: width 0.8s ease-in-out;
+    transition: width 0.8s ease-in-out;
   }
   
   /* When the input field gets focus, change its width to 100% */
