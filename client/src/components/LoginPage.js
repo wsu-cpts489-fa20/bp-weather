@@ -102,10 +102,11 @@ handleGuestLoginClick = async (event) => {
     this.setState({loginBtnIcon: "fa fa-spin fa-spinner",
                    loginBtnLabel: "Logging In..."});
     const url = "auth/login?username=" + "guest@mail.com" +
-                "&password=" + "Guest123123";
+                "&password=" + "password";
     const res = await fetch(url, {method: 'POST'}); 
     if (res.status == 200) { //successful login!
         window.open("/","_self");
+        localStorage.setItem("userId", "guest@mail.com");
     } else { //Unsuccessful login
       const resText = await res.text();
       this.setState({loginBtnIcon: "fa fa-sign-in",
