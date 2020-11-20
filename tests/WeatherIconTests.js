@@ -14,8 +14,6 @@ test('Weather Icon', async t => {
         .click('#guest-login-btn')
         .wait(500)
         .setNativeDialogHandler(() => true)
-        .click('#addStationBtn')
-        .wait(500)
         .click('#historyTab')
         .wait(500)
         .click('#searchTab')

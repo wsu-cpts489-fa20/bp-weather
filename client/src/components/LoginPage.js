@@ -48,6 +48,9 @@ handleLoginSubmit = async (event) => {
     const res = await fetch(url, {method: 'POST'}); 
     if (res.status == 200) { //successful login!
         window.open("/","_self");
+
+    localStorage.setItem("userId", this.emailInputRef.current.value);
+
     } else { //Unsuccessful login
       const resText = await res.text();
       this.setState({loginBtnIcon: "fa fa-sign-in",
@@ -102,7 +105,7 @@ handleGuestLoginClick = async (event) => {
     this.setState({loginBtnIcon: "fa fa-spin fa-spinner",
                    loginBtnLabel: "Logging In..."});
     const url = "auth/login?username=" + "guest@mail.com" +
-                "&password=" + "password";
+                "&password=" + "Guest123123";
     const res = await fetch(url, {method: 'POST'}); 
     if (res.status == 200) { //successful login!
         window.open("/","_self");

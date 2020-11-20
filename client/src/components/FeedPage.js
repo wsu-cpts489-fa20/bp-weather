@@ -1,3 +1,4 @@
+import { json } from 'body-parser';
 import React from 'react';
 import WeatherStation from './WeatherStation.js';
 
@@ -315,13 +316,14 @@ class FeedPage extends React.Component {
 
                 <div id="weatherStations">
                     {/* {rows} */}
-                    
-                        <WeatherStation key={this.state.station.stationId}
-                                        latitude={this.state.station.lat}
-                                        longitude={this.state.station.lon}
-                                        stationId={this.state.station.stationId}
-                                        moveStation={this.moveStation}
-                                        removeStation={this.removeStation} /> 
+                    {JSON.stringify(this.state.station) != JSON.stringify({}) ?                        
+                    <WeatherStation key={this.state.station.stationId}
+                        latitude={this.state.station.lat}
+                        longitude={this.state.station.lon}
+                        stationId={this.state.station.stationId}
+                        moveStation={this.moveStation}
+                        removeStation={this.removeStation} /> : null
+                        }
                     
                 </div>
             </div>
