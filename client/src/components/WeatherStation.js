@@ -13,7 +13,6 @@ class WeatherStation extends React.Component {
                       longitude: this.props.longitude,
                       
                      };
-
         
         
       }
@@ -61,6 +60,23 @@ class WeatherStation extends React.Component {
 
                          
         
+    }
+
+    favoriteStation = (stationId) => {
+        var userId = localStorage.getItem("userId");
+        console.log(userId);
+        var data = JSON.parse(localStorage.getItem(userId));
+        console.log(data);
+
+        var newStation = {}; // empty object
+        newStation.id = stationId;
+        newStation.latitude = this.state.latitude;
+        newStation.longitude = this.state.longitude;
+        console.log("data.weatherStations.length = " + data.weatherStations.length);
+        data.weatherStations[data.weatherStationCount + 1] = newStation;
+        data.weatherStationCount++;
+
+        localStorage.setItem(userId, JSON.stringify(data));
     }
     
     toggleUnits = () => {
@@ -173,11 +189,12 @@ class WeatherStation extends React.Component {
             {/* shift up icon */}
             <span className="shift-icon fa fa-arrow-up" onClick={() => this.props.moveStation(this.props.stationId, "up")}></span>
 
-            
+            {/* Favorite icon */}
+            <span className={this.state.favorited ? "favorite-icon fas fa-star" : "favorite-icon fa fa-star"} onClick={() => {console.log("before favoriteStation"); this.favoriteStation(this.props.stationId)}}></span>
 
             {/* Delete icon */}
             <span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span>
-
+            
             <div class="weatherStation">
                 
                 <h2>Weather Conditions at {this.state.place} </h2>
