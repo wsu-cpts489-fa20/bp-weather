@@ -384,3 +384,14 @@ text-align: center;
     color: black;
     background-color: lightgray;
   }
+
+  input[type=newLocation] {
+    width: 250px;
+    -webkit-transition: width 0.8s ease-in-out;
+    transition: width 0.8s ease-in-out;
+  }
+  
+  /* When the input field gets focus, change its width to 100% */
+  input[type=newLocation]:focus {
+    width: 100%;
+  }
