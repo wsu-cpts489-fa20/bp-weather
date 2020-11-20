@@ -92,6 +92,7 @@ class FeedPage extends React.Component {
         // const newStation = prompt("Enter a City, State, and Country:");
         const newStation = document.getElementById('inputStation').value;
         if (newStation != null) { //Need to see if we can find the station through the API 
+
             const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' +
                 newStation + '&appid=' + process.env.REACT_APP_API_KEY);
             const stationData = await response.json();
@@ -116,6 +117,7 @@ class FeedPage extends React.Component {
             } else {
                 alert("Sorry, that weather location could not be found.");
             }
+
         }
         document.searchForLocation.reset()
 
@@ -124,21 +126,25 @@ class FeedPage extends React.Component {
 
     //save the stations to localstorage
     writeStations(ids, lats, longs) {
+
         let thisUser = localStorage.getItem("userId");
         let data = JSON.parse(localStorage.getItem(thisUser));
 
         //Initialize empty JavaScript object to store new or updated station
         let thisStation = {}; //iniitalize empty object for this station
 
+        
         for (let i = 0; i < ids.length; i++) {
             //Store the data
-            thisStation.id = ids[i];
+            thisStation.id = i + 1;
             thisStation.latitude = lats[i];
             thisStation.longitude = longs[i];
 
             data.weatherStations[i + 1] = thisStation;
             data.weatherStationCount = ids.length;
+
             localStorage.setItem(thisUser, JSON.stringify(data));
+
             thisStation = {};
         }
     }
@@ -220,6 +226,7 @@ class FeedPage extends React.Component {
         let thisUser = localStorage.getItem("userId");
         let data = JSON.parse(localStorage.getItem(thisUser));
 
+
         //check if null if first time logging in
         if (data != null) {
             let rows = [];
@@ -268,13 +275,11 @@ class FeedPage extends React.Component {
                 moveStation={this.moveStation}
                 removeStation={this.removeStation} />);
         }
+ 
+        if (this.state.stations.length >= 1) {
 
 
-
-
-        if (this.state.initialFire == false) {
-
-            let thisUser = localStorage.getItem("userId");
+            let thisUser = localStorage.getItem("guest@mail.com");
             let data = JSON.parse(localStorage.getItem(thisUser));
 
             //set to null and resave to make things easier
@@ -290,9 +295,11 @@ class FeedPage extends React.Component {
         return (
             <div id="main">
 
+
                 {/* <div className="floatButton" id="floatBtnDiv">
                     <a className="float" id="addStationBtn" onClick={this.addStation}>
                         <span className="float-btn-icon fa fa-plus" id="floatBtnIcon"></span>
+
                     </a>
                 </div> */}
 
