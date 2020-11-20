@@ -279,7 +279,7 @@ class FeedPage extends React.Component {
         if (this.state.stations.length >= 1) {
 
 
-            let thisUser = localStorage.getItem("guest@mail.com");
+            let thisUser = localStorage.getItem("userId");
             let data = JSON.parse(localStorage.getItem(thisUser));
 
             //set to null and resave to make things easier
