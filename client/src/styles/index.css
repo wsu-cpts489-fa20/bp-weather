@@ -387,6 +387,7 @@ text-align: center;
     background-color: lightgray;
   }
 
+
   .weatherStation {
     position: relative;
   }
@@ -396,3 +397,14 @@ text-align: center;
     background-color:#D0D3D5;
     text-align:center;
 }
+
+  input[type=newLocation] {
+    width: 250px;
+    -webkit-transition: width 0.8s ease-in-out;
+    transition: width 0.8s ease-in-out;
+  }
+  
+  /* When the input field gets focus, change its width to 100% */
+  input[type=newLocation]:focus {
+    width: 100%;
+  }
