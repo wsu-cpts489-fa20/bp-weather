@@ -394,7 +394,8 @@ text-align: center;
 
 
   .jumbotron{
-    background-color:#D0D3D5;
+    /* background-color:#D0D3D5; */
+    background-color:#eff8ff;
     text-align:center;
 }
 
