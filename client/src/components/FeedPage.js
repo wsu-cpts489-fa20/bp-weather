@@ -7,6 +7,7 @@ class FeedPage extends React.Component {
         super(props);
         this.state = {
             stations: [],
+            station: {},
             stationCount: 0,
             initialFire: true
         };
@@ -105,14 +106,19 @@ class FeedPage extends React.Component {
                     lon: stationData.coord.lon,
                     stationId: this.state.stationCount + 1
                 });
+                let newStation = {};
+                newStation.lat = stationData.coord.lat;
+                newStation.lon = stationData.coord.lon;
+                newStation.stationId = this.state.stationCount + 1;
 
 
                 this.setState({
                     stations: newStations,
+                    station: newStation,    // only have one station
                     stationCount: this.state.stationCount + 1
-                }, () => {
-                    this.writeStations(this.state.stationCount, stationData.coord.lat, stationData.coord.lon);
-                });
+                }, 
+                    // () => { this.writeStations(this.state.stationCount, stationData.coord.lat, stationData.coord.lon);}  // don't write to localStorage
+                );
 
             } else {
                 alert("Sorry, that weather location could not be found.");
@@ -284,7 +290,7 @@ class FeedPage extends React.Component {
 
             //set to null and resave to make things easier
             data = null;
-            this.writeStations(ids, lats, longs);
+            // this.writeStations(ids, lats, longs);
         }
 
         //if theres no stations, we want to fire componentDidMount
@@ -294,8 +300,6 @@ class FeedPage extends React.Component {
 
         return (
             <div id="main">
-
-
                 {/* <div className="floatButton" id="floatBtnDiv">
                     <a className="float" id="addStationBtn" onClick={this.addStation}>
                         <span className="float-btn-icon fa fa-plus" id="floatBtnIcon"></span>
@@ -310,7 +314,15 @@ class FeedPage extends React.Component {
                 </form>
 
                 <div id="weatherStations">
-                    {rows}
+                    {/* {rows} */}
+                    
+                        <WeatherStation key={this.state.station.stationId}
+                                        latitude={this.state.station.lat}
+                                        longitude={this.state.station.lon}
+                                        stationId={this.state.station.stationId}
+                                        moveStation={this.moveStation}
+                                        removeStation={this.removeStation} /> 
+                    
                 </div>
             </div>
 
