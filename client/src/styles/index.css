@@ -161,6 +161,8 @@ color: gray;
       color:#6bbcff;
 }
 
+
+
 /* Styling for the divs in the app. Ensures that the content at top isn't obscured by top bar */
 .padded-page {
 padding: 56px 8px 0px 8px;
@@ -383,4 +385,26 @@ text-align: center;
     padding-bottom: 6px;
     color: black;
     background-color: lightgray;
+  }
+
+
+  .weatherStation {
+    position: relative;
+  }
+
+
+  .jumbotron{
+    background-color:#D0D3D5;
+    text-align:center;
+}
+
+  input[type=newLocation] {
+    width: 250px;
+    -webkit-transition: width 0.8s ease-in-out;
+    transition: width 0.8s ease-in-out;
+  }
+  
+  /* When the input field gets focus, change its width to 100% */
+  input[type=newLocation]:focus {
+    width: 100%;
   }

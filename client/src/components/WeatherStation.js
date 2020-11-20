@@ -15,7 +15,9 @@ class WeatherStation extends React.Component {
                      };
 
         
+        
       }
+
 
     componentDidMount = () => {
       
@@ -30,6 +32,14 @@ class WeatherStation extends React.Component {
             this.state.latitude + '&lon=' +
             this.state.longitude + '&appid=' + process.env.REACT_APP_API_KEY);
             const currWeather = await response.json();
+
+            var iconCode = this.getIcon(currWeather.weather[0].id, true);
+            var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@4x.png";
+
+            console.log("icon code: " + iconCode);
+            console.log("icon url: " + iconUrl);
+
+
             this.setState({place: currWeather.name,
     
                          retrieved: (new Date()).toLocaleDateString() + " at " + (new Date()).toLocaleTimeString(),
@@ -44,7 +54,8 @@ class WeatherStation extends React.Component {
                          windUnit: "Meters/sec",
                          windDirection: currWeather.wind.deg,
                          windDirectionUnit: "Degrees",
-                         units: "Metric"
+                         units: "Metric",
+                         weatherIcon: iconUrl
                          });
 
 
@@ -74,6 +85,86 @@ class WeatherStation extends React.Component {
       }
     }
 
+    getIcon = (code, daytime) => {
+
+        var iconCode = "";
+
+        if (code >= 200 && code < 300) {
+            iconCode = "11d"
+            
+        }
+        else if (code >= 300 && code < 400) {
+            iconCode = "09d";
+        }
+        else if (code >= 500 && code < 600) {
+
+            if (code >= 500 && code <= 504) {
+                iconCode = "10d";
+            }
+            else if (code == 511) {
+                iconCode = "13d";
+            }
+            else {
+                iconCode = "09d";
+            }
+        }
+        else if (code >= 600 && code < 700) {
+            iconCode = "13d";
+        }
+        else if (code >= 700 && code < 800) {
+            iconCode = "50d";
+        }
+        else if (code >= 800 && code < 900) {
+            if (code == 800) {
+                if (daytime == true) {
+                    iconCode = "01d"
+                }
+                else {
+                    iconCode = "01n"
+                }
+            }
+            else if (code == 800) {
+                iconCode = "01n";
+            }
+            else if (code >= 801 && code <= 804) {
+                if (code == 801) {
+
+                    if (daytime == true) {
+                        iconCode = "02d";
+                    }
+                    else {
+                        iconCode = "02n";
+                    }
+                }
+                else if (code == 802){
+                    if (daytime == true) {
+                        iconCode = "03d";
+                    }
+                    else {
+                        iconCode = "03nd";
+                    }
+                }
+                else if (code == 803){
+                    if (daytime == true) {
+                        iconCode = "04d";
+                    }
+                    else {
+                        iconCode = "04d";
+                    }
+                }
+                else if (code == 804) {
+                    if (daytime == true) {
+                        iconCode = "04d";
+                    }
+                    else {
+                        iconCode = "04d";
+                    }
+                }
+            }
+        }
+
+        return iconCode;
+    }
     render() {
         return (
             <div align="center" className="jumbotron"> 
@@ -86,26 +177,36 @@ class WeatherStation extends React.Component {
 
             {/* Delete icon */}
             <span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span>
-            <h2>Weather Conditions at {this.state.place} </h2>
+
+            <div class="weatherStation">
+                
+                <h2>Weather Conditions at {this.state.place} </h2>
 
 
-            <h6><i>Last updated: {this.state.retrieved}</i>
-            {/* Refresh icon */}
-            &nbsp; <span className="refresh-icon fa fa-retweet"
-            onClick={() => this.getCurrentObservations()}></span> 
-            </h6>
+                <h6><i>Last updated: {this.state.retrieved}</i>
+                {/* Refresh icon */}
+                &nbsp; <span className="refresh-icon fa fa-retweet"
+                onClick={() => this.getCurrentObservations()}></span> 
+                </h6>
 
-            <h5>Conditions: {this.state.conditions}</h5>
-            <h5>Visibility: {this.state.visibility + " " + this.state.visibilityUnit}</h5>
-            <h5>Temp: {this.state.temp}&deg;&nbsp;{this.state.tempUnit}</h5>
-            <h5>Humidity: {this.state.humidity}%</h5>
-            <h5>Wind Speed: {this.state.wind + " " + this.state.windUnit}</h5>
-            <h5>Wind Direction: {this.state.windDirection + " " + this.state.windDirectionUnit}</h5>
-            <div className="custom-control custom-switch">
-                <input type="checkbox" className="custom-control-input" id={"switch-" + this.props.stationId} 
-                     onClick={this.toggleUnits} />
-                <label className="custom-control-label" htmlFor={"switch-" + this.props.stationId}>&nbsp;{this.state.units}</label>
+                <img src= {this.state.weatherIcon} alt="weatherIcon"/>
+                <h5>Conditions: {this.state.conditions}</h5>
+                <h5>Visibility: {this.state.visibility + " " + this.state.visibilityUnit}</h5>
+                <h5>Temp: {this.state.temp}&deg;&nbsp;{this.state.tempUnit}</h5>
+                <h5>Humidity: {this.state.humidity}%</h5>
+                <h5>Wind Speed: {this.state.wind + " " + this.state.windUnit}</h5>
+                <h5>Wind Direction: {this.state.windDirection + " " + this.state.windDirectionUnit}</h5>
+                <div className="custom-control custom-switch">
+                    <input type="checkbox" className="custom-control-input" id={"switch-" + this.props.stationId} 
+                        onClick={this.toggleUnits} />
+                    <label className="custom-control-label" htmlFor={"switch-" + this.props.stationId}>&nbsp;{this.state.units}</label>
+                </div>
             </div>
+
+
+            {/* image */}
+            
+            
 
              {/* shift down icon */}
              <span className="shift-icon fa fa-arrow-down" onClick={() => this.props.moveStation(this.props.stationId, "down")}></span>
