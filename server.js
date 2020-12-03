@@ -53,6 +53,20 @@ const roundSchema = new Schema({
   }
 });
 
+const weatherSchema = new Schema({
+  id: {type: String, required: true},
+  latitude: {type: String, required: true},
+  longitude: {type: String, required: true},
+},
+{
+  toObject: {
+  virtuals: true
+  },
+  toJSON: {
+  virtuals: true 
+  }
+});
+
 roundSchema.virtual('SGS').get(function() {
   return (this.strokes * 60) + (this.minutes * 60) + this.seconds;
 });
@@ -68,7 +82,8 @@ const userSchema = new Schema({
   securityQuestion: String,
   securityAnswer: {type: String, required: function() 
     {return this.securityQuestion ? true: false}},
-  rounds: [roundSchema]
+  rounds: [roundSchema],
+  weathers: [weatherSchema]
 });
 const User = mongoose.model("User",userSchema); 
 
@@ -386,6 +401,35 @@ app.post('/rounds/:userId', async (req, res, next) => {
   } 
 });
 
+app.post('/weathers/:userId', async (req, res, next) => {
+  console.log("in /weathers (POST) route with params = " + 
+              JSON.stringify(req.params) + " and body = " + 
+              JSON.stringify(req.body));
+  if (!req.body.hasOwnProperty("id") || 
+      !req.body.hasOwnProperty("latitude") || 
+      !req.body.hasOwnProperty("longitude")) {
+    //Body does not contain correct properties
+    return res.status(400).send("POST request on /weathers formulated incorrectly." +
+      "Body must contain all 3 required fields: id, latitude, longitude.");
+  }
+  try {
+    let status = await User.updateOne(
+    {id: req.params.userId},
+    {$push: {weathers: req.body}});
+    if (status.nModified != 1) { //Should never happen!
+      res.status(400).send("Unexpected error occurred when adding weather to"+
+        " database. Weather Station was not added.");
+    } else {
+      res.status(200).send("Weather Station successfully added to database.");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Unexpected error occurred when adding weather" +
+     " to database: " + err);
+  } 
+});
+
+
 //READ round route: Returns all rounds associated 
 //with a given user in the users collection (GET)
 app.get('/rounds/:userId', async(req, res) => {
@@ -404,14 +448,29 @@ app.get('/rounds/:userId', async(req, res) => {
   }
 });
 
+app.get('/weathers/:userId', async(req, res) => {
+  console.log("in /weathers route (GET) with userId = " + 
+    JSON.stringify(req.params.userId));
+  try {
+    let thisUser = await User.findOne({id: req.params.userId});
+    if (!thisUser) {
+      return res.status(400).message("No user account with specified userId was found in database.");
+    } else {
+      return res.status(200).json(JSON.stringify(thisUser.weathers));
+    }
+  } catch (err) {
+    console.log()
+    return res.status(400).message("Unexpected error occurred when looking up user in database: " + err);
+  }
+});
+
 //UPDATE round route: Updates a specific round 
 //for a given user in the users collection (PUT)
 app.put('/rounds/:userId/:roundId', async (req, res, next) => {
   console.log("in /rounds (PUT) route with params = " + 
               JSON.stringify(req.params) + " and body = " + 
               JSON.stringify(req.body));
-  const validProps = ['date', 'course', 'type', 'holes', 'strokes',
-    'minutes', 'seconds', 'notes'];
+  const validProps = ['id', 'latitude', 'longitude'];
   let bodyObj = {...req.body};
   delete bodyObj._id; //Not needed for update
   delete bodyObj.SGS; //We'll compute this below in seconds.
@@ -443,6 +502,43 @@ app.put('/rounds/:userId/:roundId', async (req, res, next) => {
   } 
 });
 
+// app.put('/weathers/:userId/:weatherId', async (req, res, next) => {
+//   console.log("in /rounds (PUT) route with params = " + 
+//               JSON.stringify(req.params) + " and body = " + 
+//               JSON.stringify(req.body));
+//   const validProps = ['id', 'latitude', 'longitude'];
+//   let bodyObj = {...req.body};
+//   delete bodyObj._id; //Not needed for update
+//   delete bodyObj.SGS; //We'll compute this below in seconds.
+//   for (const bodyProp in bodyObj) {
+//     if (!validProps.includes(bodyProp)) {
+//       return res.status(400).send("rounds/ PUT request formulated incorrectly." +
+//         "It includes " + bodyProp + ". However, only the following props are allowed: " +
+//         "'date', 'course', 'type', 'holes', 'strokes', " +
+//         "'minutes', 'seconds', 'notes'");
+//     } else {
+//       bodyObj["weathers.$." + bodyProp] = bodyObj[bodyProp];
+//       delete bodyObj[bodyProp];
+//     }
+//   }
+//   try {
+//     let status = await User.updateOne(
+//       {"id": req.params.userId,
+//        "weathers._id": mongoose.Types.ObjectId(req.params.weatherId)}
+//       ,{"$set" : bodyObj}
+//     );
+//     if (status.nModified != 1) {
+//       res.status(400).send("Unexpected error occurred when updating round in database. Round was not updated.");
+//     } else {
+//       res.status(200).send("Round successfully updated in database.");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).send("Unexpected error occurred when updating round in database: " + err);
+//   } 
+// });
+
+
 //DELETE round route: Deletes a specific round 
 //for a given user in the users collection (DELETE)
 app.delete('/rounds/:userId/:roundId', async (req, res, next) => {
@@ -463,3 +559,21 @@ app.delete('/rounds/:userId/:roundId', async (req, res, next) => {
   } 
 });
 
+app.delete('/weathers/:userId/:weathersId', async (req, res, next) => {
+  console.log("in /weathers (DELETE) route with params = " + 
+              JSON.stringify(req.params)); 
+  console.log(req.params.weathersId)
+  try {
+    let status = await User.updateOne(
+      {id: req.params.userId},
+      {$pull: {weathers: {id: req.params.weathersId}}});
+    if (status.nModified != 1) { //Should never happen!
+      res.status(400).send("Unexpected error occurred when deleting weather from database. Round was not deleted.");
+    } else {
+      res.status(200).send("Weather successfully deleted from database.");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Unexpected error occurred when deleting weather from database: " + err);
+  } 
+});
