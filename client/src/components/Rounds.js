@@ -11,13 +11,17 @@ import FloatingButton from './FloatingButton.js';
 class Rounds extends React.Component {
 
     //Initialize a Rounds object based on local storage
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        this.state = {Histories: this.props.Histories}
         this.deleteId = "";
         this.editId = "";
         this.state = {errorMsg: ""};           
     }
 
+    // componentDidMount(){
+    //     this.addHistory(this.props.Histories);
+    // }
     //addRound -- Given an object newData containing a new round, use the 
     //server POST route to add the new round to the database. If the add is
     //successful, call on the refreshOnUpdate() method to force the parent
@@ -42,6 +46,28 @@ class Rounds extends React.Component {
             this.props.refreshOnUpdate(AppMode.ROUNDS);
         }
     }
+
+    // addHistory = async (newData) => {
+    //     console.log("Rounds data format:")
+    //     console.log(newData)
+    //     const data = newData;
+    //     const url = '/histories/' + this.props.userObj.id;
+    //     const res = await fetch(url, {
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+    //             },
+    //         method: 'POST',
+    //         body: JSON.stringify(newData)}); 
+    //     const msg = await res.text();
+    //     if (res.status != 200) {
+    //         this.setState({errorMsg: msg});
+    //         this.props.changeMode(AppMode.ROUNDS);
+    //     } else {
+    //         this.setState({errorMsg: ""});
+    //         this.props.refreshOnUpdate(AppMode.ROUNDS);
+    //     }
+    // }
 
     //editRound -- Given an object newData containing updated data on an
     //existing round, update the current user's round in the database. 
@@ -82,11 +108,28 @@ class Rounds extends React.Component {
             this.props.refreshOnUpdate(AppMode.ROUNDS);
         }  
     }
+
+    deleteHistory = async () => {
+        const url = '/histories/' + this.props.userObj.id + '/' + 
+            this.props.userObj.histories[this.deleteId]._id;
+        console.log(this.props.userObj.histories[this.deleteId]._id)
+        const res = await fetch(url, {method: 'DELETE'}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            this.setState({errorMsg: "An error occurred when attempting to delete round from database: " 
+            + msg});
+            //this.props.changeMode(AppMode.ROUNDS);
+        } else {
+            //this.props.refreshOnUpdate(AppMode.ROUNDS);
+        }  
+    }
  
     //setDeleteId -- Capture in this.state.deleteId the unique id of the item
     //the user is considering deleting.
     setDeleteId = (val) => {
         this.deleteId = val;
+        this.props.setDeleteId(val);
+        console.log("Delete ID ", this.deleteId)
         this.setState({errorMsg: ""});
     }
 
@@ -118,6 +161,8 @@ class Rounds extends React.Component {
                         setEditId={this.setEditId}
                         setDeleteId={this.setDeleteId}
                         deleteRound={this.deleteRound}
+                        deleteHistory={this.deleteHistory}
+                        Histories={this.props.Histories}
                         changeMode={this.props.changeMode}
                         menuOpen={this.props.menuOpen} /> 
                     <FloatingButton

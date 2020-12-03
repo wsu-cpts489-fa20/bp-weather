@@ -33,7 +33,19 @@ mongoose.connect(connectStr, {useNewUrlParser: true, useUnifiedTopology: true})
     err => {console.error(`Error connecting to ${connectStr}: ${err}`)}
   );
 
+
 const Schema = mongoose.Schema;
+const historiesSchema = new Schema({
+  Date: {type: String, required: true},
+  Location: {type: String, required: true},
+  Condition: {type: String, required: true},
+  Visibility: {type: String, required: true},
+  Temperature: {type: String, required: true},
+  Humidity: {type: String, required: true},
+  WindSpeed: {type: String, required: true},
+  WindDirection: {type: String, required: true},
+  countHistory: {type: Number, required: true}
+})
 const roundSchema = new Schema({
   date: {type: Date, required: true},
   course: {type: String, required: true},
@@ -68,7 +80,8 @@ const userSchema = new Schema({
   securityQuestion: String,
   securityAnswer: {type: String, required: function() 
     {return this.securityQuestion ? true: false}},
-  rounds: [roundSchema]
+  rounds: [roundSchema],
+  histories: [historiesSchema]
 });
 const User = mongoose.model("User",userSchema); 
 
@@ -95,7 +108,8 @@ passport.use(new GithubStrategy({
         displayName: profile.displayName,
         authStrategy: profile.provider,
         profilePicURL: profile.photos[0].value,
-        rounds: []
+        rounds: [],
+        histories: [historiesSchema]
       }).save();
   }
   return done(null,currentUser);
@@ -287,7 +301,8 @@ app.post('/users/:userId',  async (req, res, next) => {
         profilePicURL: req.body.profilePicURL,
         securityQuestion: req.body.securityQuestion,
         securityAnswer: req.body.securityAnswer,
-        rounds: []
+        rounds: [],
+        histories: []
       }).save();
       return res.status(201).send("New account for '" + 
         req.params.userId + "' successfully created.");
@@ -386,6 +401,44 @@ app.post('/rounds/:userId', async (req, res, next) => {
   } 
 });
 
+
+// post history
+app.post('/histories/:userId', async (req, res, next) => {
+  console.log("in /historiess (POST) route with params = " + 
+              JSON.stringify(req.params) + " and body = " + 
+              JSON.stringify(req.body));
+  if (!req.body.hasOwnProperty("Date") || 
+      !req.body.hasOwnProperty("Location") || 
+      !req.body.hasOwnProperty("Condition") ||
+      !req.body.hasOwnProperty("Visibility") || 
+      !req.body.hasOwnProperty("Temperature") ||
+      !req.body.hasOwnProperty("Humidity") ||
+      !req.body.hasOwnProperty("WindSpeed") || 
+      !req.body.hasOwnProperty("WindDirection")||
+      !req.body.hasOwnProperty("countHistory")) {
+    //Body does not contain correct properties
+    console.log(req.body);
+    return res.status(400).send("POST request on /histories formulated incorrectly." +
+      "Body must contain all 8 required fields: date, location, condition, visibility, temperature, humidity, windSpeed, windDirection.");
+  }
+  try {
+    console.log(req.body);
+    let status = await User.updateOne(
+    {id: req.params.userId},
+    {$push: {histories: req.body}});
+    if (status.nModified != 1) { //Should never happen!
+      res.status(400).send("Unexpected error occurred when adding histories to"+
+        " database. Histories was not added.");
+    } else {
+      res.status(200).send("Histories successfully added to database.");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Unexpected error occurred when adding histories" +
+     " to database: " + err);
+  } 
+});
+
 //READ round route: Returns all rounds associated 
 //with a given user in the users collection (GET)
 app.get('/rounds/:userId', async(req, res) => {
@@ -397,6 +450,24 @@ app.get('/rounds/:userId', async(req, res) => {
       return res.status(400).message("No user account with specified userId was found in database.");
     } else {
       return res.status(200).json(JSON.stringify(thisUser.rounds));
+    }
+  } catch (err) {
+    console.log()
+    return res.status(400).message("Unexpected error occurred when looking up user in database: " + err);
+  }
+});
+
+//READ history route: Returns all rounds associated 
+//with a given user in the users collection (GET)
+app.get('/historiess/:userId', async(req, res) => {
+  console.log("in /histories route (GET) with userId = " + 
+    JSON.stringify(req.params.userId));
+  try {
+    let thisUser = await User.findOne({id: req.params.userId});
+    if (!thisUser) {
+      return res.status(400).message("No user account with specified userId was found in database.");
+    } else {
+      return res.status(200).json(JSON.stringify(thisUser.histories));
     }
   } catch (err) {
     console.log()
@@ -452,6 +523,26 @@ app.delete('/rounds/:userId/:roundId', async (req, res, next) => {
     let status = await User.updateOne(
       {id: req.params.userId},
       {$pull: {rounds: {_id: mongoose.Types.ObjectId(req.params.roundId)}}});
+    if (status.nModified != 1) { //Should never happen!
+      res.status(400).send("Unexpected error occurred when deleting round from database. Round was not deleted.");
+    } else {
+      res.status(200).send("Round successfully deleted from database.");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Unexpected error occurred when deleting round from database: " + err);
+  } 
+});
+
+//DELETE round route: Deletes a specific round 
+//for a given user in the users collection (DELETE)
+app.delete('/histories/:userId/:historyId', async (req, res, next) => {
+  console.log("in /histories (DELETE) route with params = " + 
+              JSON.stringify(req.params)); 
+  try {
+    let status = await User.updateOne(
+      {id: req.params.userId},
+      {$pull: {histories: {_id: mongoose.Types.ObjectId(req.params.historyId)}}});
     if (status.nModified != 1) { //Should never happen!
       res.status(400).send("Unexpected error occurred when deleting round from database. Round was not deleted.");
     } else {

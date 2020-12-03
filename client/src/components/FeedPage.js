@@ -10,7 +10,8 @@ class FeedPage extends React.Component {
             stations: [],
             station: {},
             stationCount: 0,
-            initialFire: true
+            initialFire: true,
+            userObj: this.props.userObj
         };
         this.removeStation = this.removeStation.bind(this);
         this.moveStation = this.moveStation.bind(this);
@@ -263,6 +264,13 @@ class FeedPage extends React.Component {
 
     }
 
+    setHistory = (history) =>{
+        //console.log(history);
+        this.setState({Histories: history});
+        console.log(this.state.Histories);
+        this.props.history(history);
+    }
+
     render() {
 
         let rows = [];
@@ -280,6 +288,8 @@ class FeedPage extends React.Component {
                 longitude={this.state.stations[i].lon}
                 stationId={this.state.stations[i].stationId}
                 moveStation={this.moveStation}
+                history={this.setHistory}
+                userObj={this.state.userObj}
                 removeStation={this.removeStation} />);
         }
  
@@ -322,6 +332,8 @@ class FeedPage extends React.Component {
                         longitude={this.state.station.lon}
                         stationId={this.state.station.stationId}
                         moveStation={this.moveStation}
+                        history={this.setHistory}
+                        userObj={this.state.userObj}
                         removeStation={this.removeStation} /> : null
                         }
                     

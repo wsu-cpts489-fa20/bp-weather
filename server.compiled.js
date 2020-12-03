@@ -53,6 +53,44 @@ _mongoose["default"].connect(connectStr, {
 });
 
 var Schema = _mongoose["default"].Schema;
+var historiesSchema = new Schema({
+  Date: {
+    type: String,
+    required: true
+  },
+  Location: {
+    type: String,
+    required: true
+  },
+  Condition: {
+    type: String,
+    required: true
+  },
+  Visibility: {
+    type: String,
+    required: true
+  },
+  Temperature: {
+    type: String,
+    required: true
+  },
+  Humidity: {
+    type: String,
+    required: true
+  },
+  WindSpeed: {
+    type: String,
+    required: true
+  },
+  WindDirection: {
+    type: String,
+    required: true
+  },
+  countHistory: {
+    type: Number,
+    required: true
+  }
+});
 var roundSchema = new Schema({
   date: {
     type: Date,
@@ -125,7 +163,8 @@ var userSchema = new Schema({
       return this.securityQuestion ? true : false;
     }
   },
-  rounds: [roundSchema]
+  rounds: [roundSchema],
+  histories: [historiesSchema]
 });
 
 var User = _mongoose["default"].model("User", userSchema); //////////////////////////////////////////////////////////////////////////
@@ -172,7 +211,8 @@ function () {
               displayName: profile.displayName,
               authStrategy: profile.provider,
               profilePicURL: profile.photos[0].value,
-              rounds: []
+              rounds: [],
+              histories: [historiesSchema]
             }).save();
 
           case 8:
@@ -496,7 +536,8 @@ app.post('/users/:userId', /*#__PURE__*/function () {
               profilePicURL: req.body.profilePicURL,
               securityQuestion: req.body.securityQuestion,
               securityAnswer: req.body.securityAnswer,
-              rounds: []
+              rounds: [],
+              histories: []
             }).save();
 
           case 13:
@@ -715,66 +756,179 @@ app.post('/rounds/:userId', /*#__PURE__*/function () {
   return function (_x23, _x24, _x25) {
     return _ref8.apply(this, arguments);
   };
-}()); //READ round route: Returns all rounds associated 
-//with a given user in the users collection (GET)
+}()); // post history
 
-app.get('/rounds/:userId', /*#__PURE__*/function () {
-  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee9(req, res) {
-    var thisUser;
+app.post('/histories/:userId', /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee9(req, res, next) {
+    var status;
     return _regeneratorRuntime["default"].wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
           case 0:
-            console.log("in /rounds route (GET) with userId = " + JSON.stringify(req.params.userId));
-            _context9.prev = 1;
-            _context9.next = 4;
-            return User.findOne({
-              id: req.params.userId
-            });
+            console.log("in /historiess (POST) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
 
-          case 4:
-            thisUser = _context9.sent;
-
-            if (thisUser) {
-              _context9.next = 9;
+            if (!(!req.body.hasOwnProperty("Date") || !req.body.hasOwnProperty("Location") || !req.body.hasOwnProperty("Condition") || !req.body.hasOwnProperty("Visibility") || !req.body.hasOwnProperty("Temperature") || !req.body.hasOwnProperty("Humidity") || !req.body.hasOwnProperty("WindSpeed") || !req.body.hasOwnProperty("WindDirection") || !req.body.hasOwnProperty("countHistory"))) {
+              _context9.next = 4;
               break;
             }
 
-            return _context9.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
+            //Body does not contain correct properties
+            console.log(req.body);
+            return _context9.abrupt("return", res.status(400).send("POST request on /histories formulated incorrectly." + "Body must contain all 8 required fields: date, location, condition, visibility, temperature, humidity, windSpeed, windDirection."));
 
-          case 9:
-            return _context9.abrupt("return", res.status(200).json(JSON.stringify(thisUser.rounds)));
+          case 4:
+            _context9.prev = 4;
+            console.log(req.body);
+            _context9.next = 8;
+            return User.updateOne({
+              id: req.params.userId
+            }, {
+              $push: {
+                histories: req.body
+              }
+            });
 
-          case 10:
+          case 8:
+            status = _context9.sent;
+
+            if (status.nModified != 1) {
+              //Should never happen!
+              res.status(400).send("Unexpected error occurred when adding histories to" + " database. Histories was not added.");
+            } else {
+              res.status(200).send("Histories successfully added to database.");
+            }
+
             _context9.next = 16;
             break;
 
           case 12:
             _context9.prev = 12;
-            _context9.t0 = _context9["catch"](1);
-            console.log();
-            return _context9.abrupt("return", res.status(400).message("Unexpected error occurred when looking up user in database: " + _context9.t0));
+            _context9.t0 = _context9["catch"](4);
+            console.log(_context9.t0);
+            return _context9.abrupt("return", res.status(400).send("Unexpected error occurred when adding histories" + " to database: " + _context9.t0));
 
           case 16:
           case "end":
             return _context9.stop();
         }
       }
-    }, _callee9, null, [[1, 12]]);
+    }, _callee9, null, [[4, 12]]);
   }));
 
-  return function (_x26, _x27) {
+  return function (_x26, _x27, _x28) {
     return _ref9.apply(this, arguments);
+  };
+}()); //READ round route: Returns all rounds associated 
+//with a given user in the users collection (GET)
+
+app.get('/rounds/:userId', /*#__PURE__*/function () {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee10(req, res) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            console.log("in /rounds route (GET) with userId = " + JSON.stringify(req.params.userId));
+            _context10.prev = 1;
+            _context10.next = 4;
+            return User.findOne({
+              id: req.params.userId
+            });
+
+          case 4:
+            thisUser = _context10.sent;
+
+            if (thisUser) {
+              _context10.next = 9;
+              break;
+            }
+
+            return _context10.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
+
+          case 9:
+            return _context10.abrupt("return", res.status(200).json(JSON.stringify(thisUser.rounds)));
+
+          case 10:
+            _context10.next = 16;
+            break;
+
+          case 12:
+            _context10.prev = 12;
+            _context10.t0 = _context10["catch"](1);
+            console.log();
+            return _context10.abrupt("return", res.status(400).message("Unexpected error occurred when looking up user in database: " + _context10.t0));
+
+          case 16:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10, null, [[1, 12]]);
+  }));
+
+  return function (_x29, _x30) {
+    return _ref10.apply(this, arguments);
+  };
+}()); //READ history route: Returns all rounds associated 
+//with a given user in the users collection (GET)
+
+app.get('/historiess/:userId', /*#__PURE__*/function () {
+  var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee11(req, res) {
+    var thisUser;
+    return _regeneratorRuntime["default"].wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            console.log("in /histories route (GET) with userId = " + JSON.stringify(req.params.userId));
+            _context11.prev = 1;
+            _context11.next = 4;
+            return User.findOne({
+              id: req.params.userId
+            });
+
+          case 4:
+            thisUser = _context11.sent;
+
+            if (thisUser) {
+              _context11.next = 9;
+              break;
+            }
+
+            return _context11.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
+
+          case 9:
+            return _context11.abrupt("return", res.status(200).json(JSON.stringify(thisUser.histories)));
+
+          case 10:
+            _context11.next = 16;
+            break;
+
+          case 12:
+            _context11.prev = 12;
+            _context11.t0 = _context11["catch"](1);
+            console.log();
+            return _context11.abrupt("return", res.status(400).message("Unexpected error occurred when looking up user in database: " + _context11.t0));
+
+          case 16:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11, null, [[1, 12]]);
+  }));
+
+  return function (_x31, _x32) {
+    return _ref11.apply(this, arguments);
   };
 }()); //UPDATE round route: Updates a specific round 
 //for a given user in the users collection (PUT)
 
 app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
-  var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee10(req, res, next) {
+  var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee12(req, res, next) {
     var validProps, bodyObj, bodyProp, status;
-    return _regeneratorRuntime["default"].wrap(function _callee10$(_context10) {
+    return _regeneratorRuntime["default"].wrap(function _callee12$(_context12) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context12.prev = _context12.next) {
           case 0:
             console.log("in /rounds (PUT) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
             validProps = ['date', 'course', 'type', 'holes', 'strokes', 'minutes', 'seconds', 'notes'];
@@ -783,34 +937,34 @@ app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
 
             delete bodyObj.SGS; //We'll compute this below in seconds.
 
-            _context10.t0 = _regeneratorRuntime["default"].keys(bodyObj);
+            _context12.t0 = _regeneratorRuntime["default"].keys(bodyObj);
 
           case 6:
-            if ((_context10.t1 = _context10.t0()).done) {
-              _context10.next = 16;
+            if ((_context12.t1 = _context12.t0()).done) {
+              _context12.next = 16;
               break;
             }
 
-            bodyProp = _context10.t1.value;
+            bodyProp = _context12.t1.value;
 
             if (validProps.includes(bodyProp)) {
-              _context10.next = 12;
+              _context12.next = 12;
               break;
             }
 
-            return _context10.abrupt("return", res.status(400).send("rounds/ PUT request formulated incorrectly." + "It includes " + bodyProp + ". However, only the following props are allowed: " + "'date', 'course', 'type', 'holes', 'strokes', " + "'minutes', 'seconds', 'notes'"));
+            return _context12.abrupt("return", res.status(400).send("rounds/ PUT request formulated incorrectly." + "It includes " + bodyProp + ". However, only the following props are allowed: " + "'date', 'course', 'type', 'holes', 'strokes', " + "'minutes', 'seconds', 'notes'"));
 
           case 12:
             bodyObj["rounds.$." + bodyProp] = bodyObj[bodyProp];
             delete bodyObj[bodyProp];
 
           case 14:
-            _context10.next = 6;
+            _context12.next = 6;
             break;
 
           case 16:
-            _context10.prev = 16;
-            _context10.next = 19;
+            _context12.prev = 16;
+            _context12.next = 19;
             return User.updateOne({
               "id": req.params.userId,
               "rounds._id": _mongoose["default"].Types.ObjectId(req.params.roundId)
@@ -819,7 +973,7 @@ app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
             });
 
           case 19:
-            status = _context10.sent;
+            status = _context12.sent;
 
             if (status.nModified != 1) {
               res.status(400).send("Unexpected error occurred when updating round in database. Round was not updated.");
@@ -827,39 +981,39 @@ app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
               res.status(200).send("Round successfully updated in database.");
             }
 
-            _context10.next = 27;
+            _context12.next = 27;
             break;
 
           case 23:
-            _context10.prev = 23;
-            _context10.t2 = _context10["catch"](16);
-            console.log(_context10.t2);
-            return _context10.abrupt("return", res.status(400).send("Unexpected error occurred when updating round in database: " + _context10.t2));
+            _context12.prev = 23;
+            _context12.t2 = _context12["catch"](16);
+            console.log(_context12.t2);
+            return _context12.abrupt("return", res.status(400).send("Unexpected error occurred when updating round in database: " + _context12.t2));
 
           case 27:
           case "end":
-            return _context10.stop();
+            return _context12.stop();
         }
       }
-    }, _callee10, null, [[16, 23]]);
+    }, _callee12, null, [[16, 23]]);
   }));
 
-  return function (_x28, _x29, _x30) {
-    return _ref10.apply(this, arguments);
+  return function (_x33, _x34, _x35) {
+    return _ref12.apply(this, arguments);
   };
 }()); //DELETE round route: Deletes a specific round 
 //for a given user in the users collection (DELETE)
 
 app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
-  var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee11(req, res, next) {
+  var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee13(req, res, next) {
     var status;
-    return _regeneratorRuntime["default"].wrap(function _callee11$(_context11) {
+    return _regeneratorRuntime["default"].wrap(function _callee13$(_context13) {
       while (1) {
-        switch (_context11.prev = _context11.next) {
+        switch (_context13.prev = _context13.next) {
           case 0:
             console.log("in /rounds (DELETE) route with params = " + JSON.stringify(req.params));
-            _context11.prev = 1;
-            _context11.next = 4;
+            _context13.prev = 1;
+            _context13.next = 4;
             return User.updateOne({
               id: req.params.userId
             }, {
@@ -871,7 +1025,7 @@ app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
             });
 
           case 4:
-            status = _context11.sent;
+            status = _context13.sent;
 
             if (status.nModified != 1) {
               //Should never happen!
@@ -880,24 +1034,77 @@ app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
               res.status(200).send("Round successfully deleted from database.");
             }
 
-            _context11.next = 12;
+            _context13.next = 12;
             break;
 
           case 8:
-            _context11.prev = 8;
-            _context11.t0 = _context11["catch"](1);
-            console.log(_context11.t0);
-            return _context11.abrupt("return", res.status(400).send("Unexpected error occurred when deleting round from database: " + _context11.t0));
+            _context13.prev = 8;
+            _context13.t0 = _context13["catch"](1);
+            console.log(_context13.t0);
+            return _context13.abrupt("return", res.status(400).send("Unexpected error occurred when deleting round from database: " + _context13.t0));
 
           case 12:
           case "end":
-            return _context11.stop();
+            return _context13.stop();
         }
       }
-    }, _callee11, null, [[1, 8]]);
+    }, _callee13, null, [[1, 8]]);
   }));
 
-  return function (_x31, _x32, _x33) {
-    return _ref11.apply(this, arguments);
+  return function (_x36, _x37, _x38) {
+    return _ref13.apply(this, arguments);
+  };
+}()); //DELETE round route: Deletes a specific round 
+//for a given user in the users collection (DELETE)
+
+app["delete"]('/histories/:userId/:historyId', /*#__PURE__*/function () {
+  var _ref14 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee14(req, res, next) {
+    var status;
+    return _regeneratorRuntime["default"].wrap(function _callee14$(_context14) {
+      while (1) {
+        switch (_context14.prev = _context14.next) {
+          case 0:
+            console.log("in /histories (DELETE) route with params = " + JSON.stringify(req.params));
+            _context14.prev = 1;
+            _context14.next = 4;
+            return User.updateOne({
+              id: req.params.userId
+            }, {
+              $pull: {
+                histories: {
+                  _id: _mongoose["default"].Types.ObjectId(req.params.historyId)
+                }
+              }
+            });
+
+          case 4:
+            status = _context14.sent;
+
+            if (status.nModified != 1) {
+              //Should never happen!
+              res.status(400).send("Unexpected error occurred when deleting round from database. Round was not deleted.");
+            } else {
+              res.status(200).send("Round successfully deleted from database.");
+            }
+
+            _context14.next = 12;
+            break;
+
+          case 8:
+            _context14.prev = 8;
+            _context14.t0 = _context14["catch"](1);
+            console.log(_context14.t0);
+            return _context14.abrupt("return", res.status(400).send("Unexpected error occurred when deleting round from database: " + _context14.t0));
+
+          case 12:
+          case "end":
+            return _context14.stop();
+        }
+      }
+    }, _callee14, null, [[1, 8]]);
+  }));
+
+  return function (_x39, _x40, _x41) {
+    return _ref14.apply(this, arguments);
   };
 }());
