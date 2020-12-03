@@ -22,7 +22,7 @@ class CoursesPage extends React.Component {
             this.loadStations();
         }
         else {
-            navigator.geolocation.getCurrentPosition(this.getLocSuccess, this.getLocError);
+            // navigator.geolocation.getCurrentPosition(this.getLocSuccess, this.getLocError);
         }
     }
 
@@ -88,25 +88,25 @@ class CoursesPage extends React.Component {
     }
 
     //save the stations to localstorage
-    writeStations(ids, lats, longs) {
-        let thisUser = localStorage.getItem("userId");
-        let data = JSON.parse(localStorage.getItem(thisUser));
+    // writeStations(ids, lats, longs) {
+    //     let thisUser = localStorage.getItem("userId");
+    //     let data = JSON.parse(localStorage.getItem(thisUser));
 
-        //Initialize empty JavaScript object to store new or updated station
-        let thisStation = {}; //iniitalize empty object for this station
+    //     //Initialize empty JavaScript object to store new or updated station
+    //     let thisStation = {}; //iniitalize empty object for this station
 
-        for (let i = 0; i < ids.length; i++) {
-            //Store the data
-            thisStation.id = ids[i];
-            thisStation.latitude = lats[i];
-            thisStation.longitude = longs[i];
+    //     for (let i = 0; i < ids.length; i++) {
+    //         //Store the data
+    //         thisStation.id = ids[i];
+    //         thisStation.latitude = lats[i];
+    //         thisStation.longitude = longs[i];
 
-            data.weatherStations[i + 1] = thisStation;
-            data.weatherStationCount = ids.length;
-            localStorage.setItem(thisUser, JSON.stringify(data));
-            thisStation = {};
-        }
-    }
+    //         data.weatherStations[i + 1] = thisStation;
+    //         data.weatherStationCount = ids.length;
+    //         localStorage.setItem(thisUser, JSON.stringify(data));
+    //         thisStation = {};
+    //     }
+    // }
 
     deleteWeatherStation = async (newData) => {
         // const url = '/weathers/' + this.props.userObj.id;
@@ -244,7 +244,7 @@ class CoursesPage extends React.Component {
 
 
             for (let i = 0; i < data.weathers.length; i++) {
-                var keyid = i + 1;
+                // var keyid = i + 1;
                 rows.push({
                     lat: Number.parseFloat(data.weathers[i].latitude),
                     lon: Number.parseFloat(data.weathers[i].longitude),
@@ -299,7 +299,7 @@ class CoursesPage extends React.Component {
 
             //set to null and resave to make things easier
             data = null;
-            this.writeStations(ids, lats, longs);
+            //this.writeStations(ids, lats, longs);
         }
 
         //if theres no stations, we want to fire componentDidMount
