@@ -53,6 +53,44 @@ _mongoose["default"].connect(connectStr, {
 });
 
 var Schema = _mongoose["default"].Schema;
+var historiesSchema = new Schema({
+  Date: {
+    type: String,
+    required: true
+  },
+  Location: {
+    type: String,
+    required: true
+  },
+  Condition: {
+    type: String,
+    required: true
+  },
+  Visibility: {
+    type: String,
+    required: true
+  },
+  Temperature: {
+    type: String,
+    required: true
+  },
+  Humidity: {
+    type: String,
+    required: true
+  },
+  WindSpeed: {
+    type: String,
+    required: true
+  },
+  WindDirection: {
+    type: String,
+    required: true
+  },
+  countHistory: {
+    type: Number,
+    required: true
+  }
+});
 var roundSchema = new Schema({
   date: {
     type: Date,
@@ -147,7 +185,9 @@ var userSchema = new Schema({
     }
   },
   rounds: [roundSchema],
+  histories: [historiesSchema]
   weathers: [weatherSchema]
+
 });
 
 var User = _mongoose["default"].model("User", userSchema); //////////////////////////////////////////////////////////////////////////
@@ -194,7 +234,8 @@ function () {
               displayName: profile.displayName,
               authStrategy: profile.provider,
               profilePicURL: profile.photos[0].value,
-              rounds: []
+              rounds: [],
+              histories: [historiesSchema]
             }).save();
 
           case 8:
@@ -518,7 +559,8 @@ app.post('/users/:userId', /*#__PURE__*/function () {
               profilePicURL: req.body.profilePicURL,
               securityQuestion: req.body.securityQuestion,
               securityAnswer: req.body.securityAnswer,
-              rounds: []
+              rounds: [],
+              histories: []
             }).save();
 
           case 13:
@@ -737,14 +779,17 @@ app.post('/rounds/:userId', /*#__PURE__*/function () {
   return function (_x23, _x24, _x25) {
     return _ref8.apply(this, arguments);
   };
+
 }());
 app.post('/weathers/:userId', /*#__PURE__*/function () {
+
   var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee9(req, res, next) {
     var status;
     return _regeneratorRuntime["default"].wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
           case 0:
+
             console.log("in /weathers (POST) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
 
             if (!(!req.body.hasOwnProperty("id") || !req.body.hasOwnProperty("latitude") || !req.body.hasOwnProperty("longitude"))) {
@@ -757,19 +802,23 @@ app.post('/weathers/:userId', /*#__PURE__*/function () {
           case 3:
             _context9.prev = 3;
             _context9.next = 6;
+
             return User.updateOne({
               id: req.params.userId
             }, {
               $push: {
+
                 weathers: req.body
               }
             });
 
           case 6:
+
             status = _context9.sent;
 
             if (status.nModified != 1) {
               //Should never happen!
+
               res.status(400).send("Unexpected error occurred when adding weather to" + " database. Weather Station was not added.");
             } else {
               res.status(200).send("Weather Station successfully added to database.");
@@ -785,11 +834,14 @@ app.post('/weathers/:userId', /*#__PURE__*/function () {
             return _context9.abrupt("return", res.status(400).send("Unexpected error occurred when adding weather" + " to database: " + _context9.t0));
 
           case 14:
+
           case "end":
             return _context9.stop();
         }
       }
+
     }, _callee9, null, [[3, 10]]);
+
   }));
 
   return function (_x26, _x27, _x28) {
@@ -846,15 +898,20 @@ app.get('/rounds/:userId', /*#__PURE__*/function () {
   return function (_x29, _x30) {
     return _ref10.apply(this, arguments);
   };
+
 }());
 app.get('/weathers/:userId', /*#__PURE__*/function () {
+
   var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee11(req, res) {
     var thisUser;
     return _regeneratorRuntime["default"].wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
           case 0:
+            console.log("in /histories route (GET) with userId = " + JSON.stringify(req.params.userId));
+
             console.log("in /weathers route (GET) with userId = " + JSON.stringify(req.params.userId));
+
             _context11.prev = 1;
             _context11.next = 4;
             return User.findOne({
@@ -872,7 +929,9 @@ app.get('/weathers/:userId', /*#__PURE__*/function () {
             return _context11.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
 
           case 9:
+
             return _context11.abrupt("return", res.status(200).json(JSON.stringify(thisUser.weathers)));
+
 
           case 10:
             _context11.next = 16;
@@ -1064,33 +1123,42 @@ app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
   return function (_x36, _x37, _x38) {
     return _ref13.apply(this, arguments);
   };
+
 }());
 app["delete"]('/weathers/:userId/:weathersId', /*#__PURE__*/function () {
+
   var _ref14 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee14(req, res, next) {
     var status;
     return _regeneratorRuntime["default"].wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
           case 0:
+
             console.log("in /weathers (DELETE) route with params = " + JSON.stringify(req.params));
             console.log(req.params.weathersId);
             _context14.prev = 2;
             _context14.next = 5;
+
             return User.updateOne({
               id: req.params.userId
             }, {
               $pull: {
+
                 weathers: {
                   id: req.params.weathersId
+
                 }
               }
             });
 
+
           case 5:
+
             status = _context14.sent;
 
             if (status.nModified != 1) {
               //Should never happen!
+
               res.status(400).send("Unexpected error occurred when deleting weather from database. Round was not deleted.");
             } else {
               res.status(200).send("Weather successfully deleted from database.");
@@ -1106,11 +1174,14 @@ app["delete"]('/weathers/:userId/:weathersId', /*#__PURE__*/function () {
             return _context14.abrupt("return", res.status(400).send("Unexpected error occurred when deleting weather from database: " + _context14.t0));
 
           case 13:
+
           case "end":
             return _context14.stop();
         }
       }
+
     }, _callee14, null, [[2, 9]]);
+
   }));
 
   return function (_x39, _x40, _x41) {

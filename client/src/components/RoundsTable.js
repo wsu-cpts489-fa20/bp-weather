@@ -27,6 +27,10 @@ class RoundsTable extends React.Component {
     this.setState({showConfirmDelete: false});
   }
 
+  deleteHistory = () => {
+    this.props.deleteHistory();
+    this.setState({showConfirmDelete: false});
+  }
 
   //confirmDelete -- Triggered when the user clicks the delete button
   //for a given round. The id paam is the unique property that 
@@ -43,25 +47,31 @@ class RoundsTable extends React.Component {
   //by the current user and providing buttons to view/edit and delete each round.
   renderTable = () => {
   let table = [];
-  for (let r = 0; r < this.props.rounds.length; ++r) {
+  for (let r = 0; r < this.props.Histories.length; ++r) {
     table.push(
       <tr key={r}>
-        <td>{this.props.rounds[r].date.substring(0,10)}</td>
-        <td>{this.props.rounds[r].course}</td>
-        <td>{(Number(this.props.rounds[r].strokes) + 
-              Number(this.props.rounds[r].minutes)) +
-              ":" + (this.props.rounds[r].seconds < 10 ?  
-                "0" + this.props.rounds[r].seconds :
-                this.props.rounds[r].seconds) + " (" + 
-              this.props.rounds[r].strokes + 
-              " in " + this.props.rounds[r].minutes + ":" + 
-              (this.props.rounds[r].seconds < 10 ?  
-                "0" + this.props.rounds[r].seconds :
-                this.props.rounds[r].seconds) + ")"}
-        </td>
-        <td><button onClick={this.props.menuOpen ? null : () => 
+        <td>{this.props.Histories[r].Date}</td>
+        <td>{this.props.Histories[r].Location}</td>
+        <td>{this.props.Histories[r].Condition}</td>
+        <td>{this.props.Histories[r].Visibility}</td>
+        <td>{this.props.Histories[r].Temperature}</td>
+        <td>{this.props.Histories[r].Humidity}</td>
+        <td>{this.props.Histories[r].WindSpeed}</td>
+        <td>{this.props.Histories[r].WindDirection}</td>
+        {/* <td>{this.props.Histories[r].Condition) + 
+              Number(this.props.Histories[r].minutes)) +
+              ":" + (this.props.Histories[r].seconds < 10 ?  
+                "0" + this.props.Histories[r].seconds :
+                this.props.Histories[r].seconds) + " (" + 
+              this.props.Histories[r].strokes + 
+              " in " + this.props.Histories[r].minutes + ":" + 
+              (this.props.Histories[r].seconds < 10 ?  
+                "0" + this.props.Histories[r].seconds :
+                this.props.Histories[r].seconds) + ")"}
+        </td> */}
+        {/* <td><button onClick={this.props.menuOpen ? null : () => 
           this.editRound(r)}>
-              <span className="fa fa-eye"></span></button></td>
+              <span className="fa fa-eye"></span></button></td> */}
         <td><button onClick={this.props.menuOpen ? null : 
           () => this.confirmDelete(r)}>
               <span className="fa fa-trash"></span></button></td>
@@ -93,7 +103,7 @@ class RoundsTable extends React.Component {
         </tr>
         </thead>
         <tbody>
-          {Object.keys(this.props.rounds).length === 0 ? 
+          {Object.keys(this.props.Histories).length === 0 ? 
           <tr>
           <td colSpan="5" style={{fontStyle: "italic"}}>No rounds logged</td>
           </tr> : this.renderTable()
@@ -103,7 +113,7 @@ class RoundsTable extends React.Component {
       {this.state.showConfirmDelete ?
         <ConfirmDeleteRound 
           close={() => this.setState({showConfirmDelete: false})} 
-          deleteRound={this.deleteRound} /> : null}
+          deleteHistory={this.deleteHistory} /> : null}
     </div>
     );
   }

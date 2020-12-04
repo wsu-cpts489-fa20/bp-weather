@@ -1,6 +1,7 @@
 //this component holds the weather station api data
 //parent: WeatherFeed
 //child: none
+import { deleteModel } from 'mongoose';
 import React from 'react';
 import AppMode from '../AppMode';
 import App from './App';
@@ -11,14 +12,13 @@ class WeatherStation extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            latitude: this.props.latitude,
-            longitude: this.props.longitude,
+        this.state = {latitude: this.props.latitude,
+                      longitude: this.props.longitude,
+                      Histories: []
+                     };
+        this.count = 0;
+      }
 
-        };
-
-
-    }
 
 
     componentDidMount = () => {
@@ -86,6 +86,92 @@ class WeatherStation extends React.Component {
         setTimeout(this.props.addWeatherStation, 100, newStation);
 
     }
+    setHistory = async() =>{
+        // if (this.state.Histories.length !== 0){
+        //     delete this.state.Histories;
+        // }
+        this.count = this.count + 1;
+        console.log("Counting..." + this.count);
+        this.setState({countHistory: 1});
+        let Histories = []
+        Histories.push({Date: this.state.retrieved,
+                        Location: this.state.place,
+                        Condition: this.state.conditions,
+                        Visibility: this.state.visibility +" "+ this.state.visibilityUnit,
+                        Temperature: this.state.temp +" "+ this.state.tempUnit,
+                        Humidity: this.state.humidity,
+                        WindSpeed: this.state.wind +" "+ this.state.windUnit,
+                        WindDirection: this.state.windDirection +" "+ this.state.windDirectionUnit,
+                        countHistory: this.count});
+        await this.setState({ Histories });
+        console.log("Weather Station")
+        console.log(this.state.Histories);
+        this.props.history(this.state.Histories);
+        
+        await this.setState({Date: this.state.retrieved,
+            Location: this.state.place,
+            Condition: this.state.conditions,
+            Visibility: this.state.visibility +" "+ this.state.visibilityUnit,
+            Temperature: this.state.temp +" "+ this.state.tempUnit,
+            Humidity: this.state.humidity,
+            WindSpeed: this.state.wind +" "+ this.state.windUnit,
+            WindDirection: this.state.windDirection +" "+ this.state.windDirectionUnit,
+            countHistory: this.count});
+        // let Histories = this.state;
+        // console.log("Weather Station")
+        // console.log(Histories);
+        // this.props.history(Histories)
+
+        this.prepareHistory();
+        
+        //this.addHistory(H);
+    }
+    prepareHistory = async() =>{
+        const H = await Object.assign({}, this.state);
+        console.log(H);
+        delete H.weatherIcon;
+        delete H.Histories;
+        delete H.latitude;
+        delete H.longitude;
+        delete H.place;
+        delete H.retrieved;
+        delete H.conditions;
+        delete H.visibility;
+        delete H.visibilityUnit;
+        delete H.temp;
+        delete H.tempUnit;
+        delete H.wind;
+        delete H.windUnit;
+        delete H.windDirection;
+        delete H.windDirectionUnit;
+        delete H.units;
+        delete H.humidity;
+
+        this.addHistory(H);
+    }
+
+    addHistory = async (newData) => {
+        // console.log("Weather data format:")
+        console.log(newData)
+        // console.log(this.props.userObj)
+        const url = '/histories/' + this.props.userObj.id;
+        const res = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            method: 'POST',
+            body: JSON.stringify(newData)}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            this.setState({errorMsg: msg});
+            //this.props.changeMode(AppMode.ROUNDS);
+        } else {
+            this.setState({errorMsg: ""});
+            //this.props.refreshOnUpdate(AppMode.ROUNDS);
+        }
+    }
+
 
     toggleUnits = () => {
         if (this.state.units == "Imperial") {
@@ -196,7 +282,8 @@ class WeatherStation extends React.Component {
             <div align="center" className="jumbotron">
 
                 <div className="specialIcons">
-
+{/* History icon */}
+            <span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span>
                     {/* Delete icon */}
                     {this.props.mode != AppMode.FEED ?
                         <span className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
@@ -216,7 +303,17 @@ class WeatherStation extends React.Component {
 
                 <div class="weatherStation">
 
+            {/* History icon */}
+            //<span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span>
+
+            {/* Delete icon */}
+            //<span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span>
+            
+            //<div class="weatherStation">
+                
+
                     <h2>Weather Conditions at {this.state.place} </h2>
+
 
 
                     <h6><i>Last updated: {this.state.retrieved}</i>

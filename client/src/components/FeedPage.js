@@ -11,7 +11,7 @@ class FeedPage extends React.Component {
             stations: [],
             station: {},
             stationCount: 0,
-            initialFire: true
+            initialFire: true,
         };
         this.removeStation = this.removeStation.bind(this);
         this.moveStation = this.moveStation.bind(this);
@@ -264,6 +264,14 @@ class FeedPage extends React.Component {
 
     }
 
+    setHistory = (history) =>{
+        //console.log(history);
+        this.setState({Histories: history});
+        console.log(this.state.Histories);
+        this.props.history(history);
+    }
+
+
     addWeatherStation = async (newData) => {
         const url = '/weathers/' + this.props.userObj.id;
         const res = await fetch(url, {
@@ -303,6 +311,8 @@ class FeedPage extends React.Component {
                 longitude={this.state.stations[i].lon}
                 stationId={this.state.stations[i].stationId}
                 moveStation={this.moveStation}
+                history={this.setHistory}
+                userObj={this.state.userObj}
                 removeStation={this.removeStation} />);
         }
  
@@ -347,6 +357,7 @@ class FeedPage extends React.Component {
                         longitude={this.state.station.lon}
                         stationId={this.state.station.stationId}
                         moveStation={this.moveStation}
+                        history={this.setHistory}
                         removeStation={this.removeStation} 
                         addWeatherStation={this.addWeatherStation} 
                         mode={this.props.mode}/> : null
