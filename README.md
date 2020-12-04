@@ -12,6 +12,21 @@ Week 2
 * FeedPage.js
 * LoginPage.js
 
+Week 3
+* WeatherStation.js
+  * Added 3 new icons favorite, record, and delete. 
+  * Favorite icon only shows during search. 
+  * Delete and shift icon only shows in Favorites.
+* CoursesPage.js
+  * Modified it to be different from FeedPage which is our search page.
+  * User can delete favorites now.
+  * The weather stations are pulled from mongodb.
+* Other progess
+  * Mongodb is connected, favorite weather stations are now on mongodb.
+  * Icons have been made more repsonsive looking.
+  * History page can store information when the user hits the record button.
+  * Hosted on EB but currently having a 502 bad gateway issue.
+  
 This repo serves as the starting code for all of the CptS 489 project teams in the
 Fa20 semester. It will be pushed to their repos, deployed to their instances on
 AWS EB, and served through https://[proj-name].bfapp.org.
