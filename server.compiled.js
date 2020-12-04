@@ -141,6 +141,27 @@ var roundSchema = new Schema({
     virtuals: true
   }
 });
+var weatherSchema = new Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  latitude: {
+    type: String,
+    required: true
+  },
+  longitude: {
+    type: String,
+    required: true
+  }
+}, {
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
+  }
+});
 roundSchema.virtual('SGS').get(function () {
   return this.strokes * 60 + this.minutes * 60 + this.seconds;
 }); //Define schema that maps to a document in the Users collection in the appdb
@@ -165,6 +186,8 @@ var userSchema = new Schema({
   },
   rounds: [roundSchema],
   histories: [historiesSchema]
+  weathers: [weatherSchema]
+
 });
 
 var User = _mongoose["default"].model("User", userSchema); //////////////////////////////////////////////////////////////////////////
@@ -756,63 +779,69 @@ app.post('/rounds/:userId', /*#__PURE__*/function () {
   return function (_x23, _x24, _x25) {
     return _ref8.apply(this, arguments);
   };
-}()); // post history
 
-app.post('/histories/:userId', /*#__PURE__*/function () {
+}());
+app.post('/weathers/:userId', /*#__PURE__*/function () {
+
   var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee9(req, res, next) {
     var status;
     return _regeneratorRuntime["default"].wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
           case 0:
-            console.log("in /historiess (POST) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
 
-            if (!(!req.body.hasOwnProperty("Date") || !req.body.hasOwnProperty("Location") || !req.body.hasOwnProperty("Condition") || !req.body.hasOwnProperty("Visibility") || !req.body.hasOwnProperty("Temperature") || !req.body.hasOwnProperty("Humidity") || !req.body.hasOwnProperty("WindSpeed") || !req.body.hasOwnProperty("WindDirection") || !req.body.hasOwnProperty("countHistory"))) {
-              _context9.next = 4;
+            console.log("in /weathers (POST) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
+
+            if (!(!req.body.hasOwnProperty("id") || !req.body.hasOwnProperty("latitude") || !req.body.hasOwnProperty("longitude"))) {
+              _context9.next = 3;
               break;
             }
 
-            //Body does not contain correct properties
-            console.log(req.body);
-            return _context9.abrupt("return", res.status(400).send("POST request on /histories formulated incorrectly." + "Body must contain all 8 required fields: date, location, condition, visibility, temperature, humidity, windSpeed, windDirection."));
+            return _context9.abrupt("return", res.status(400).send("POST request on /weathers formulated incorrectly." + "Body must contain all 3 required fields: id, latitude, longitude."));
 
-          case 4:
-            _context9.prev = 4;
-            console.log(req.body);
-            _context9.next = 8;
+          case 3:
+            _context9.prev = 3;
+            _context9.next = 6;
+
             return User.updateOne({
               id: req.params.userId
             }, {
               $push: {
-                histories: req.body
+
+                weathers: req.body
               }
             });
 
-          case 8:
+          case 6:
+
             status = _context9.sent;
 
             if (status.nModified != 1) {
               //Should never happen!
-              res.status(400).send("Unexpected error occurred when adding histories to" + " database. Histories was not added.");
+
+              res.status(400).send("Unexpected error occurred when adding weather to" + " database. Weather Station was not added.");
             } else {
-              res.status(200).send("Histories successfully added to database.");
+              res.status(200).send("Weather Station successfully added to database.");
             }
 
-            _context9.next = 16;
+            _context9.next = 14;
             break;
 
-          case 12:
-            _context9.prev = 12;
-            _context9.t0 = _context9["catch"](4);
+          case 10:
+            _context9.prev = 10;
+            _context9.t0 = _context9["catch"](3);
             console.log(_context9.t0);
-            return _context9.abrupt("return", res.status(400).send("Unexpected error occurred when adding histories" + " to database: " + _context9.t0));
+            return _context9.abrupt("return", res.status(400).send("Unexpected error occurred when adding weather" + " to database: " + _context9.t0));
 
-          case 16:
+          case 14:
+
           case "end":
             return _context9.stop();
         }
       }
-    }, _callee9, null, [[4, 12]]);
+
+    }, _callee9, null, [[3, 10]]);
+
   }));
 
   return function (_x26, _x27, _x28) {
@@ -869,10 +898,10 @@ app.get('/rounds/:userId', /*#__PURE__*/function () {
   return function (_x29, _x30) {
     return _ref10.apply(this, arguments);
   };
-}()); //READ history route: Returns all rounds associated 
-//with a given user in the users collection (GET)
 
-app.get('/historiess/:userId', /*#__PURE__*/function () {
+}());
+app.get('/weathers/:userId', /*#__PURE__*/function () {
+
   var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee11(req, res) {
     var thisUser;
     return _regeneratorRuntime["default"].wrap(function _callee11$(_context11) {
@@ -880,6 +909,9 @@ app.get('/historiess/:userId', /*#__PURE__*/function () {
         switch (_context11.prev = _context11.next) {
           case 0:
             console.log("in /histories route (GET) with userId = " + JSON.stringify(req.params.userId));
+
+            console.log("in /weathers route (GET) with userId = " + JSON.stringify(req.params.userId));
+
             _context11.prev = 1;
             _context11.next = 4;
             return User.findOne({
@@ -897,7 +929,9 @@ app.get('/historiess/:userId', /*#__PURE__*/function () {
             return _context11.abrupt("return", res.status(400).message("No user account with specified userId was found in database."));
 
           case 9:
-            return _context11.abrupt("return", res.status(200).json(JSON.stringify(thisUser.histories)));
+
+            return _context11.abrupt("return", res.status(200).json(JSON.stringify(thisUser.weathers)));
+
 
           case 10:
             _context11.next = 16;
@@ -931,7 +965,7 @@ app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
         switch (_context12.prev = _context12.next) {
           case 0:
             console.log("in /rounds (PUT) route with params = " + JSON.stringify(req.params) + " and body = " + JSON.stringify(req.body));
-            validProps = ['date', 'course', 'type', 'holes', 'strokes', 'minutes', 'seconds', 'notes'];
+            validProps = ['id', 'latitude', 'longitude'];
             bodyObj = _objectSpread({}, req.body);
             delete bodyObj._id; //Not needed for update
 
@@ -1001,7 +1035,42 @@ app.put('/rounds/:userId/:roundId', /*#__PURE__*/function () {
   return function (_x33, _x34, _x35) {
     return _ref12.apply(this, arguments);
   };
-}()); //DELETE round route: Deletes a specific round 
+}()); // app.put('/weathers/:userId/:weatherId', async (req, res, next) => {
+//   console.log("in /rounds (PUT) route with params = " + 
+//               JSON.stringify(req.params) + " and body = " + 
+//               JSON.stringify(req.body));
+//   const validProps = ['id', 'latitude', 'longitude'];
+//   let bodyObj = {...req.body};
+//   delete bodyObj._id; //Not needed for update
+//   delete bodyObj.SGS; //We'll compute this below in seconds.
+//   for (const bodyProp in bodyObj) {
+//     if (!validProps.includes(bodyProp)) {
+//       return res.status(400).send("rounds/ PUT request formulated incorrectly." +
+//         "It includes " + bodyProp + ". However, only the following props are allowed: " +
+//         "'date', 'course', 'type', 'holes', 'strokes', " +
+//         "'minutes', 'seconds', 'notes'");
+//     } else {
+//       bodyObj["weathers.$." + bodyProp] = bodyObj[bodyProp];
+//       delete bodyObj[bodyProp];
+//     }
+//   }
+//   try {
+//     let status = await User.updateOne(
+//       {"id": req.params.userId,
+//        "weathers._id": mongoose.Types.ObjectId(req.params.weatherId)}
+//       ,{"$set" : bodyObj}
+//     );
+//     if (status.nModified != 1) {
+//       res.status(400).send("Unexpected error occurred when updating round in database. Round was not updated.");
+//     } else {
+//       res.status(200).send("Round successfully updated in database.");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).send("Unexpected error occurred when updating round in database: " + err);
+//   } 
+// });
+//DELETE round route: Deletes a specific round 
 //for a given user in the users collection (DELETE)
 
 app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
@@ -1054,54 +1123,65 @@ app["delete"]('/rounds/:userId/:roundId', /*#__PURE__*/function () {
   return function (_x36, _x37, _x38) {
     return _ref13.apply(this, arguments);
   };
-}()); //DELETE round route: Deletes a specific round 
-//for a given user in the users collection (DELETE)
 
-app["delete"]('/histories/:userId/:historyId', /*#__PURE__*/function () {
+}());
+app["delete"]('/weathers/:userId/:weathersId', /*#__PURE__*/function () {
+
   var _ref14 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime["default"].mark(function _callee14(req, res, next) {
     var status;
     return _regeneratorRuntime["default"].wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
           case 0:
-            console.log("in /histories (DELETE) route with params = " + JSON.stringify(req.params));
-            _context14.prev = 1;
-            _context14.next = 4;
+
+            console.log("in /weathers (DELETE) route with params = " + JSON.stringify(req.params));
+            console.log(req.params.weathersId);
+            _context14.prev = 2;
+            _context14.next = 5;
+
             return User.updateOne({
               id: req.params.userId
             }, {
               $pull: {
-                histories: {
-                  _id: _mongoose["default"].Types.ObjectId(req.params.historyId)
+
+                weathers: {
+                  id: req.params.weathersId
+
                 }
               }
             });
 
-          case 4:
+
+          case 5:
+
             status = _context14.sent;
 
             if (status.nModified != 1) {
               //Should never happen!
-              res.status(400).send("Unexpected error occurred when deleting round from database. Round was not deleted.");
+
+              res.status(400).send("Unexpected error occurred when deleting weather from database. Round was not deleted.");
             } else {
-              res.status(200).send("Round successfully deleted from database.");
+              res.status(200).send("Weather successfully deleted from database.");
             }
 
-            _context14.next = 12;
+            _context14.next = 13;
             break;
 
-          case 8:
-            _context14.prev = 8;
-            _context14.t0 = _context14["catch"](1);
+          case 9:
+            _context14.prev = 9;
+            _context14.t0 = _context14["catch"](2);
             console.log(_context14.t0);
-            return _context14.abrupt("return", res.status(400).send("Unexpected error occurred when deleting round from database: " + _context14.t0));
+            return _context14.abrupt("return", res.status(400).send("Unexpected error occurred when deleting weather from database: " + _context14.t0));
 
-          case 12:
+          case 13:
+
           case "end":
             return _context14.stop();
         }
       }
-    }, _callee14, null, [[1, 8]]);
+
+    }, _callee14, null, [[2, 9]]);
+
   }));
 
   return function (_x39, _x40, _x41) {

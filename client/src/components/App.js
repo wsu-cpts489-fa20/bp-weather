@@ -12,12 +12,12 @@ import AboutBox from './AboutBox.js';
 
 const modeTitle = {};
 
-modeTitle[AppMode.LOGIN] = "Welcome to Some Weather App";
+modeTitle[AppMode.LOGIN] = "Welcome to Weather App";
 modeTitle[AppMode.FEED] = "Search";
-modeTitle[AppMode.ROUNDS] = "Favorites";
-modeTitle[AppMode.ROUNDS_LOGROUND] = "New Favorite";
-modeTitle[AppMode.ROUNDS_EDITROUND] = "Edit Favorites";
-modeTitle[AppMode.COURSES] = "Weather History";
+modeTitle[AppMode.ROUNDS] = "Weather History";
+modeTitle[AppMode.ROUNDS_LOGROUND] = "New Weather History";
+modeTitle[AppMode.ROUNDS_EDITROUND] = "Edit Weather History";
+modeTitle[AppMode.COURSES] = "Favorites";
 
 
 const modeToPage = {};

@@ -1,6 +1,7 @@
 import { json } from 'body-parser';
 import React from 'react';
 import WeatherStation from './WeatherStation.js';
+import AppMode from '../AppMode.js';
 
 class FeedPage extends React.Component {
 
@@ -11,7 +12,6 @@ class FeedPage extends React.Component {
             station: {},
             stationCount: 0,
             initialFire: true,
-            userObj: this.props.userObj
         };
         this.removeStation = this.removeStation.bind(this);
         this.moveStation = this.moveStation.bind(this);
@@ -271,6 +271,29 @@ class FeedPage extends React.Component {
         this.props.history(history);
     }
 
+
+    addWeatherStation = async (newData) => {
+        const url = '/weathers/' + this.props.userObj.id;
+        const res = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+            method: 'POST',
+            body: JSON.stringify(newData)}); 
+        const msg = await res.text();
+        if (res.status != 200) {
+            //this.setState({errorMsg: msg});
+            //this.props.changeMode(AppMode.ROUNDS);
+            console.log("failure");
+        } else {
+            //this.setState({errorMsg: ""});
+            this.props.refreshOnUpdate(AppMode.FEED);
+            console.log("success");
+        }
+    }
+
+
     render() {
 
         let rows = [];
@@ -327,14 +350,17 @@ class FeedPage extends React.Component {
                 <div id="weatherStations">
                     {/* {rows} */}
                     {JSON.stringify(this.state.station) != JSON.stringify({}) ?                        
-                    <WeatherStation key={this.state.station.stationId}
+                    <WeatherStation 
+                        userObj={this.props.userObj}
+                        key={this.state.station.stationId}
                         latitude={this.state.station.lat}
                         longitude={this.state.station.lon}
                         stationId={this.state.station.stationId}
                         moveStation={this.moveStation}
                         history={this.setHistory}
-                        userObj={this.state.userObj}
-                        removeStation={this.removeStation} /> : null
+                        removeStation={this.removeStation} 
+                        addWeatherStation={this.addWeatherStation} 
+                        mode={this.props.mode}/> : null
                         }
                     
                 </div>

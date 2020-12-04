@@ -30,8 +30,7 @@ class NavBar extends React.Component {
         <span id="menuBtnIcon" className={"sidemenu-btn-icon " + this.getMenuBtnIcon()}>
         </span>
       </button>
-      <img src="http://tiny.cc/sslogo" alt="Speed Score Logo" height="38px"
-      width="38px" />
+      <img src="https://openrepeater.com/wp-content/uploads/2019/12/icon-weather-sunrainheavy-512.png" alt="Weather Tracker Logo" height="38px" width="38px" />
       <span className="navbar-title">
         &nbsp;{this.props.title}
       </span>

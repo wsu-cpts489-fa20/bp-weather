@@ -409,3 +409,24 @@ text-align: center;
   input[type=newLocation]:focus {
     width: 100%;
   }
+
+  .specialIcons {
+    position: absolute;
+    right: 100px;
+  }
+
+  .favorite-icon:hover {
+    color: grey;
+  }
+
+  .favorite-icon:active {
+    color: yellow;
+  }
+
+  .delete-icon:hover {
+    color: red;
+  }
+
+  .shift-icon:hover {
+    color: grey;
+  }
