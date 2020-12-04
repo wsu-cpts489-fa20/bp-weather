@@ -12,12 +12,13 @@ class WeatherStation extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {latitude: this.props.latitude,
-                      longitude: this.props.longitude,
-                      Histories: []
-                     };
+        this.state = {
+            latitude: this.props.latitude,
+            longitude: this.props.longitude,
+            Histories: []
+        };
         this.count = 0;
-      }
+    }
 
 
 
@@ -86,47 +87,51 @@ class WeatherStation extends React.Component {
         setTimeout(this.props.addWeatherStation, 100, newStation);
 
     }
-    setHistory = async() =>{
+    setHistory = async () => {
         // if (this.state.Histories.length !== 0){
         //     delete this.state.Histories;
         // }
         this.count = this.count + 1;
         console.log("Counting..." + this.count);
-        this.setState({countHistory: 1});
+        this.setState({ countHistory: 1 });
         let Histories = []
-        Histories.push({Date: this.state.retrieved,
-                        Location: this.state.place,
-                        Condition: this.state.conditions,
-                        Visibility: this.state.visibility +" "+ this.state.visibilityUnit,
-                        Temperature: this.state.temp +" "+ this.state.tempUnit,
-                        Humidity: this.state.humidity,
-                        WindSpeed: this.state.wind +" "+ this.state.windUnit,
-                        WindDirection: this.state.windDirection +" "+ this.state.windDirectionUnit,
-                        countHistory: this.count});
+        Histories.push({
+            Date: this.state.retrieved,
+            Location: this.state.place,
+            Condition: this.state.conditions,
+            Visibility: this.state.visibility + " " + this.state.visibilityUnit,
+            Temperature: this.state.temp + " " + this.state.tempUnit,
+            Humidity: this.state.humidity,
+            WindSpeed: this.state.wind + " " + this.state.windUnit,
+            WindDirection: this.state.windDirection + " " + this.state.windDirectionUnit,
+            countHistory: this.count
+        });
         await this.setState({ Histories });
         console.log("Weather Station")
         console.log(this.state.Histories);
         this.props.history(this.state.Histories);
-        
-        await this.setState({Date: this.state.retrieved,
+
+        await this.setState({
+            Date: this.state.retrieved,
             Location: this.state.place,
             Condition: this.state.conditions,
-            Visibility: this.state.visibility +" "+ this.state.visibilityUnit,
-            Temperature: this.state.temp +" "+ this.state.tempUnit,
+            Visibility: this.state.visibility + " " + this.state.visibilityUnit,
+            Temperature: this.state.temp + " " + this.state.tempUnit,
             Humidity: this.state.humidity,
-            WindSpeed: this.state.wind +" "+ this.state.windUnit,
-            WindDirection: this.state.windDirection +" "+ this.state.windDirectionUnit,
-            countHistory: this.count});
+            WindSpeed: this.state.wind + " " + this.state.windUnit,
+            WindDirection: this.state.windDirection + " " + this.state.windDirectionUnit,
+            countHistory: this.count
+        });
         // let Histories = this.state;
         // console.log("Weather Station")
         // console.log(Histories);
         // this.props.history(Histories)
 
         this.prepareHistory();
-        
+
         //this.addHistory(H);
     }
-    prepareHistory = async() =>{
+    prepareHistory = async () => {
         const H = await Object.assign({}, this.state);
         console.log(H);
         delete H.weatherIcon;
@@ -159,15 +164,16 @@ class WeatherStation extends React.Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-                },
+            },
             method: 'POST',
-            body: JSON.stringify(newData)}); 
+            body: JSON.stringify(newData)
+        });
         const msg = await res.text();
         if (res.status != 200) {
-            this.setState({errorMsg: msg});
+            this.setState({ errorMsg: msg });
             //this.props.changeMode(AppMode.ROUNDS);
         } else {
-            this.setState({errorMsg: ""});
+            this.setState({ errorMsg: "" });
             //this.props.refreshOnUpdate(AppMode.ROUNDS);
         }
     }
@@ -281,20 +287,6 @@ class WeatherStation extends React.Component {
         return (
             <div align="center" className="jumbotron">
 
-                <div className="specialIcons">
-{/* History icon */}
-            <span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span>
-                    {/* Delete icon */}
-                    {this.props.mode != AppMode.FEED ?
-                        <span className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
-                        : null}
-                </div>
-                <div className="favoriteIcon">
-                    {/* Favorite icon */}
-                    {this.props.mode != AppMode.COURSES ?
-                        <span className="favorite-icon fa fa-star fa-2x" onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
-                        : null}
-                </div>
                 {/* shift up icon */}
                 {this.props.mode != AppMode.FEED ?
                     <span className="shift-icon fa fa-arrow-up fa-2x" onClick={() => this.props.moveStation(this.props.stationId, "up")}></span>
@@ -303,14 +295,14 @@ class WeatherStation extends React.Component {
 
                 <div class="weatherStation">
 
-            {/* History icon */}
-            //<span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span>
+                    {/* History icon */}
+                    {/* <span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span> */}
 
-            {/* Delete icon */}
-            //<span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span>
-            
-            //<div class="weatherStation">
-                
+                    {/* Delete icon */}
+                    {/* <span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span> */}
+
+                    {/* <div class="weatherStation"> */}
+
 
                     <h2>Weather Conditions at {this.state.place} </h2>
 
@@ -344,6 +336,20 @@ class WeatherStation extends React.Component {
                     <span className="shift-icon fa fa-arrow-down fa-2x" onClick={() => this.props.moveStation(this.props.stationId, "down")}></span>
                     : null
                 }
+                <div >
+                    {/* History icon */}
+                    <span className="history-icon fa fa-history fa-2x" onClick={() => { this.setHistory() }}></span>
+
+                    {/* Favorite icon */}
+                    {this.props.mode != AppMode.COURSES ?
+                        <span className="favorite-icon fa fa-star fa-2x" onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
+                        : null}
+                                            {/* Delete icon */}
+                    {this.props.mode != AppMode.FEED ?
+                        <span className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
+                        : null}
+
+                </div>
             </div>
         );
     }

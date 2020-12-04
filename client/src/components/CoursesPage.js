@@ -267,7 +267,12 @@ class CoursesPage extends React.Component {
 
     }
 
-
+    setHistory = (history) =>{
+        //console.log(history);
+        this.setState({Histories: history});
+        console.log(this.state.Histories);
+        this.props.history(history);
+    }
 
     render() {
 
@@ -286,6 +291,7 @@ class CoursesPage extends React.Component {
                 longitude={this.state.stations[i].lon}
                 stationId={this.state.stations[i].stationId}
                 moveStation={this.moveStation}
+                history={this.setHistory}
                 removeStation={this.removeStation}
                 addWeatherStation={this.deleteWeatherStation} 
                 mode={this.props.mode}/>);

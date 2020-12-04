@@ -95,7 +95,7 @@ const userSchema = new Schema({
   securityAnswer: {type: String, required: function() 
     {return this.securityQuestion ? true: false}},
   rounds: [roundSchema],
-  histories: [historiesSchema]
+  histories: [historiesSchema],
   weathers: [weatherSchema]
 
 });
@@ -125,7 +125,8 @@ passport.use(new GithubStrategy({
         authStrategy: profile.provider,
         profilePicURL: profile.photos[0].value,
         rounds: [],
-        histories: [historiesSchema]
+        histories: [],
+        weathers: []
       }).save();
   }
   return done(null,currentUser);
