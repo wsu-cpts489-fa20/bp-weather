@@ -1,8 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-client/build/asset-manifest.json
-client/build/index.html
-client/build/service-worker.js
+
 
 # Client/ directory dependencies
 client/node_modules

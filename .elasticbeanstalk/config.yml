@@ -1,12 +1,12 @@
 branch-defaults:
   master:
-    environment: SpeedgolfMern-env
+    environment: Weather-env
 environment-defaults:
-  SpeedgolfMern-env:
+  Weather-env:
     branch: null
     repository: null
 global:
-  application_name: speedgolf-MERN
+  application_name: weather
   default_ec2_keyname: null
   default_platform: Node.js 12 running on 64bit Amazon Linux 2
   default_region: us-west-2
