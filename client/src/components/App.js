@@ -40,7 +40,8 @@ class App extends React.Component {
                   editAccount: false,
                   showEditAccountDialog: false,
                   statusMsg: "",
-                  showAboutDialog: false
+                  showAboutDialog: false,
+                  Histories: []
                  };
   }
 
@@ -154,6 +155,21 @@ class App extends React.Component {
     this.setState({statusMsg: ""});
   }
 
+  setHistory = (history) =>{
+    if (this.state.Histories.length === 0){
+      this.setState({Histories: history});
+    }
+    else {
+      history.countHistory = this.state.Histories.countHistory + 1;
+      this.setState(prevState => ({ Histories: prevState.Histories.concat(history)}));
+    }
+    console.log("Root");
+    console.log(this.state.Histories);
+  }
+  setDeleteId = (val) =>{
+    delete this.state.Histories[val];
+  }
+
   render() {
     const ModePage = modeToPage[this.state.mode];
     return (
@@ -194,8 +210,11 @@ class App extends React.Component {
           <ModePage 
             menuOpen={this.state.menuOpen}
             mode={this.state.mode}
+            Histories={this.state.Histories}
             changeMode={this.handleChangeMode}
+            setDeleteId={this.setDeleteId}
             userObj={this.state.userObj}
+            history={this.setHistory}
             refreshOnUpdate={this.refreshOnUpdate}/>
       </div>
     );  

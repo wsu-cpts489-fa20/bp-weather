@@ -17,7 +17,7 @@ class ConfirmDeleteRound extends React.Component {
               <p>Do you really want to delete this round?</p>
             </div>
             <div className="modal-footer">
-                  <button className="btn btn-danger" onClick={this.props.deleteRound}>
+                  <button className="btn btn-danger" onClick={this.props.deleteHistory}>
                   Yes, Delete</button>
                   <button className="btn btn-secondary" onClick={this.props.close}>
                   No, Cancel</button>
