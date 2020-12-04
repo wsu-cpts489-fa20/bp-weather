@@ -53,7 +53,20 @@ class App extends React.Component {
         .then((response) => response.json())
         .then((obj) => {
           if (obj.isAuthenticated) {
-           
+            const userId = obj.user.id + '@' + obj.user.provider;
+            // get data from mongoDB
+            fetch('/user/userId')
+              .then((response) => response.json())
+              .then((obj) => {
+                if (obj.status === 404) {
+                  // user not found
+                  // construct new user from data
+                } else if (obj.status === 200) {
+                  // user was found
+                }
+              })
+
+            // update current user (client-side)
             this.setState({
               userObj: obj.user,
               authenticated: true,
@@ -201,7 +214,10 @@ class App extends React.Component {
             localAccount={this.state.userObj.authStrategy === "local"}
             userObj={this.state.userObj}
             editAccount={this.showEditAccount}
-            logOut={() => {this.handleChangeMode(AppMode.LOGIN); localStorage.setItem("userId", null)}}
+            logOut={() => {
+              this.handleChangeMode(AppMode.LOGIN); 
+              localStorage.setItem("userId", null)
+            }}
             showAbout={() => {this.setState({showAboutDialog: true})}}/>
           <ModeBar 
             mode={this.state.mode} 

@@ -12,7 +12,7 @@ import path from 'path';
 import express from 'express';
 require('dotenv').config();
 
-const LOCAL_PORT = 8080;
+const LOCAL_PORT = 8081;
 const DEPLOY_URL = "https://weather.bfapp.org";
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
 const GithubStrategy = passportGithub.Strategy;
@@ -281,7 +281,7 @@ app.get('/users/:userId', async(req, res, next) => {
       return res.status(404).send("No user account with id " +
         req.params.userId + " was found in database.");
     } else {
-      return res.status(200).json(JSON.stringify(thisUser));
+      return res.status(200).json(thisUser);
     }
   } catch (err) {
     console.log()

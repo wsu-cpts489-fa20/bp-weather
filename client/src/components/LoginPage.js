@@ -47,10 +47,8 @@ handleLoginSubmit = async (event) => {
 
     const res = await fetch(url, {method: 'POST'}); 
     if (res.status == 200) { //successful login!
+        localStorage.setItem("userId", this.emailInputRef.current.value);
         window.open("/","_self");
-
-    localStorage.setItem("userId", this.emailInputRef.current.value);
-
     } else { //Unsuccessful login
       const resText = await res.text();
       this.setState({loginBtnIcon: "fa fa-sign-in",

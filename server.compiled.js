@@ -30,7 +30,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 require('dotenv').config();
 
-var LOCAL_PORT = 8080;
+var LOCAL_PORT = 8081;
 var DEPLOY_URL = "https://weather.bfapp.org";
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
 var GithubStrategy = _passportGithub["default"].Strategy;
@@ -488,7 +488,7 @@ app.get('/users/:userId', /*#__PURE__*/function () {
             return _context4.abrupt("return", res.status(404).send("No user account with id " + req.params.userId + " was found in database."));
 
           case 9:
-            return _context4.abrupt("return", res.status(200).json(JSON.stringify(thisUser)));
+            return _context4.abrupt("return", res.status(200).json(thisUser));
 
           case 10:
             _context4.next = 16;
