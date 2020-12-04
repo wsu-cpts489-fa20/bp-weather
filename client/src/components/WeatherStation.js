@@ -338,15 +338,15 @@ class WeatherStation extends React.Component {
                 }
                 <div >
                     {/* History icon */}
-                    <span className="history-icon fa fa-history fa-2x" onClick={() => { this.setHistory() }}></span>
+                    <span id="history-icon-btn" className="history-icon fa fa-history fa-2x" onClick={() => { this.setHistory() }}></span>
 
                     {/* Favorite icon */}
                     {this.props.mode != AppMode.COURSES ?
-                        <span className="favorite-icon fa fa-star fa-2x" onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
+                        <span id="favorite-icon-btn" className="favorite-icon fa fa-star fa-2x" onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
                         : null}
                                             {/* Delete icon */}
                     {this.props.mode != AppMode.FEED ?
-                        <span className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
+                        <span id="delete-icon-btn" className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
                         : null}
 
                 </div>

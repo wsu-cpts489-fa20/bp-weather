@@ -14,7 +14,7 @@ class ModeBar extends React.Component {
         </a>
         <a className={(this.props.mode === AppMode.COURSES ? " item-selected" : null)}
           onClick={() => this.props.changeMode(AppMode.COURSES)}>
-          <span className="modebar-icon  fa fa-star" id="historyTab"></span>
+          <span className="modebar-icon  fa fa-star" id="favoritesTab"></span>
           <span className="modebar-text">Favorites</span>
         </a>
 
@@ -23,7 +23,7 @@ class ModeBar extends React.Component {
           this.props.mode === AppMode.ROUNDS_LOGROUND ?
           " item-selected" : null)}
           onClick={() => this.props.changeMode(AppMode.ROUNDS)}>
-          <span className="modebar-icon fa fa-book" id="favoritesTab"></span>
+          <span className="modebar-icon fa fa-book" id="historyTab"></span>
           <span className="modebar-text">Weather History</span>
         </a>
       </div>
