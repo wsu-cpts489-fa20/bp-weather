@@ -246,7 +246,7 @@ cancelCreateAccount = () => {
             </button>
 
             <button id="google-login-btn" type="button" className="btn btn-github"
-               onClick={this.handleGuestLoginClick("google")}>
+               onClick={() => this.handleOAuthLoginClick("google")}>
               <span className={this.state.googleIcon}></span>&nbsp;
                 {this.state.googleLabel}
             </button>
