@@ -327,7 +327,9 @@ function () {
 _passport["default"].use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_CLIENT_ID,
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-  callbackURL: DEPLOY_URL + "/auth/facebook/callback"
+  callbackURL: DEPLOY_URL + "/auth/facebook/callback",
+  enableProof: true,
+  profileFields: ['id', 'displayName', 'photos', 'email']
 },
 /*#__PURE__*/
 //The following function is called after user authenticates with github
@@ -350,29 +352,30 @@ function () {
           case 4:
             currentUser = _context3.sent;
             console.log("profile: " + JSON.stringify(profile));
+            console.log("\n");
+            console.log("photo id: " + profile.photos[0].value);
 
             if (currentUser) {
-              _context3.next = 10;
+              _context3.next = 12;
               break;
             }
 
-            _context3.next = 9;
+            _context3.next = 11;
             return new User({
               id: userId,
               displayName: profile.displayName,
               authStrategy: profile.provider,
-              profilePicURL: profile_pic,
+              profilePicURL: profile.photos[0].value,
               rounds: []
             }).save();
 
-          case 9:
+          case 11:
             currentUser = _context3.sent;
 
-          case 10:
-            console.log("======= " + profile.photos[0].value + "========");
+          case 12:
             return _context3.abrupt("return", done(null, currentUser));
 
-          case 12:
+          case 13:
           case "end":
             return _context3.stop();
         }
@@ -540,7 +543,7 @@ app.get('/auth/google', _passport["default"].authenticate('google', {
 }));
 app.get('/auth/facebook', _passport["default"].authenticate('facebook', {
   authType: 'reauthenticate',
-  scope: ['user_friends', 'manage_pages']
+  scope: ['user_friends']
 })); //CALLBACK route:  GitHub will call this route after the
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.

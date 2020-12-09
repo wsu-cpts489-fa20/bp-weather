@@ -161,7 +161,7 @@ async (accessToken, refreshToken, profile, done) => {
     }).save();
   }
 
-  console.log("======= " + profile.photos[0].value + "========");
+  
   return done(null,currentUser);
 }
 ));
@@ -169,7 +169,10 @@ async (accessToken, refreshToken, profile, done) => {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_CLIENT_ID,
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-  callbackURL: DEPLOY_URL + "/auth/facebook/callback"
+  callbackURL: DEPLOY_URL + "/auth/facebook/callback",
+  enableProof: true,
+  profileFields: ['id', 'displayName', 'photos', 'email']
+
 },
 //The following function is called after user authenticates with github
 async (accessToken, refreshToken, profile, done) => {
@@ -180,18 +183,19 @@ async (accessToken, refreshToken, profile, done) => {
   let currentUser = await User.findOne({id: userId});
 
   console.log("profile: " + JSON.stringify(profile));
+  
 
   if (!currentUser) { //Add this user to the database
       currentUser = await new User({
       id: userId,
       displayName: profile.displayName,
       authStrategy: profile.provider,
-      profilePicURL: profile_pic,
+      profilePicURL: profile.photos[0].value,
+
       rounds: []
     }).save();
   }
 
-  console.log("======= " + profile.photos[0].value + "========");
   return done(null,currentUser);
 }
 ));
@@ -284,8 +288,8 @@ app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/google', passport.authenticate('google', {scope: ['profile']}));
 
 
-app.get('/auth/facebook', passport.authenticate('facebook', { authType: 'reauthenticate', scope: ['user_friends', 'manage_pages'] }));
-
+app.get('/auth/facebook',
+  passport.authenticate('facebook', { authType: 'reauthenticate', scope: ['user_friends'] }));
 
 
 
