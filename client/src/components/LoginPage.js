@@ -24,6 +24,8 @@ constructor() {
                   githubLabel: "Sign in with GitHub",
                   guestLabel: "Sign in as guest",
                   guestIcon: "fa fa-user-alt",
+                  googleIcon: "fa fa-google",
+                  googleLabel: "Sign in with Google",
                   loginMsg: "",
                   newAccountCreated: false
                   };
@@ -241,6 +243,12 @@ cancelCreateAccount = () => {
                onClick={() => this.handleOAuthLoginClick("github")}>
               <span className={this.state.githubIcon}></span>&nbsp;
                 {this.state.githubLabel}
+            </button>
+
+            <button id="google-login-btn" type="button" className="btn btn-github"
+               onClick={this.handleGuestLoginClick("google")}>
+              <span className={this.state.googleIcon}></span>&nbsp;
+                {this.state.googleLabel}
             </button>
 
             <button id="guest-login-btn" type="button" className="btn btn-github"

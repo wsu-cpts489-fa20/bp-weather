@@ -30,8 +30,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 require('dotenv').config();
 
-var LOCAL_PORT = 8080;
-var DEPLOY_URL = "https://weather.bfapp.org";
+var LOCAL_PORT = 8081;
+var DEPLOY_URL = "http://localhost:8081";
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
 var GithubStrategy = _passportGithub["default"].Strategy;
 var LocalStrategy = _passportLocal["default"].Strategy;
