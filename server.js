@@ -6,6 +6,7 @@
 import passport from 'passport';
 import passportGithub from 'passport-github'; 
 import passportGoogle from 'passport-google-oauth2';
+import passportFacebook from 'passport-facebook';
 import passportLocal from 'passport-local';
 import session from 'express-session';
 import regeneratorRuntime from "regenerator-runtime";
@@ -18,6 +19,7 @@ const DEPLOY_URL = "http://localhost:8081";
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
 const GithubStrategy = passportGithub.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
+const FacebookStrategy = passportFacebook.Strategy;
 const LocalStrategy = passportLocal.Strategy;
 const app = express();
 
@@ -164,6 +166,37 @@ async (accessToken, refreshToken, profile, done) => {
 }
 ));
 
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  callbackURL: DEPLOY_URL + "/auth/facebook/callback"
+},
+//The following function is called after user authenticates with github
+async (accessToken, refreshToken, profile, done) => {
+  console.log("User authenticated through Facebook! In passport callback.");
+  //Our convention is to build userId from displayName and provider
+  const userId = `${profile.displayName}@${profile.provider}`;
+  //See if document with this unique userId exists in database 
+  let currentUser = await User.findOne({id: userId});
+
+  console.log("profile: " + JSON.stringify(profile));
+
+  if (!currentUser) { //Add this user to the database
+      currentUser = await new User({
+      id: userId,
+      displayName: profile.displayName,
+      authStrategy: profile.provider,
+      profilePicURL: profile_pic,
+      rounds: []
+    }).save();
+  }
+
+  console.log("======= " + profile.photos[0].value + "========");
+  return done(null,currentUser);
+}
+));
+
+
 passport.use(new LocalStrategy({passReqToCallback: true},
   //Called when user is attempting to log in with local username and password. 
   //userId contains the email address entered into the form and password
@@ -251,6 +284,11 @@ app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/google', passport.authenticate('google', {scope: ['profile']}));
 
 
+app.get('/auth/facebook', passport.authenticate('facebook', { authType: 'reauthenticate', scope: ['user_friends', 'manage_pages'] }));
+
+
+
+
 //CALLBACK route:  GitHub will call this route after the
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.
@@ -265,6 +303,14 @@ app.get('/auth/github/callback', passport.authenticate('github', { failureRedire
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     console.log("auth/google/callback reached.")
+    res.redirect('/'); //sends user back to login screen; 
+                       //req.isAuthenticated() indicates status
+  }
+);
+
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }),
+  (req, res) => {
+    console.log("auth/facebook/callback reached.")
     res.redirect('/'); //sends user back to login screen; 
                        //req.isAuthenticated() indicates status
   }
