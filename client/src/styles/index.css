@@ -430,3 +430,7 @@ text-align: center;
   .shift-icon:hover {
     color: grey;
   }
+
+  .history-icon:hover {
+    color: #6bbcff;
+  }
