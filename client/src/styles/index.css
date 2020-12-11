@@ -400,14 +400,15 @@ text-align: center;
 }
 
   input[type=newLocation] {
-    width: 250px;
+    width: 50%;
     -webkit-transition: width 0.8s ease-in-out;
     transition: width 0.8s ease-in-out;
+    text-align: center;
   }
   
   /* When the input field gets focus, change its width to 100% */
   input[type=newLocation]:focus {
-    width: 100%;
+    width: 75%;
   }
 
   .specialIcons {
