@@ -16,8 +16,8 @@ require('dotenv').config();
 
 
 const LOCAL_PORT = 8080;
-const DEPLOY_URL = "http://localhost:8080";
-//"https://weather.bfapp.org";
+const DEPLOY_URL = "https://weather.bfapp.org";
+//http://localhost:8081";
 
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
 const GithubStrategy = passportGithub.Strategy;

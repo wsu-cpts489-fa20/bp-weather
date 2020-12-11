@@ -34,9 +34,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 require('dotenv').config();
 
-
 var LOCAL_PORT = 8080;
-var DEPLOY_URL = "https://weather.bfapp.org";
+var DEPLOY_URL = "https://weather.bfapp.org"; //http://localhost:8081";
 
 var PORT = process.env.HTTP_PORT || LOCAL_PORT;
 var GithubStrategy = _passportGithub["default"].Strategy;
@@ -310,10 +309,9 @@ function () {
             currentUser = _context2.sent;
 
           case 10:
-            console.log("======= " + profile.photos[0].value + "========");
             return _context2.abrupt("return", done(null, currentUser));
 
-          case 12:
+          case 11:
           case "end":
             return _context2.stop();
         }
@@ -354,15 +352,13 @@ function () {
           case 4:
             currentUser = _context3.sent;
             console.log("profile: " + JSON.stringify(profile));
-            console.log("\n");
-            console.log("photo id: " + profile.photos[0].value);
 
             if (currentUser) {
-              _context3.next = 12;
+              _context3.next = 10;
               break;
             }
 
-            _context3.next = 11;
+            _context3.next = 9;
             return new User({
               id: userId,
               displayName: profile.displayName,
@@ -371,13 +367,13 @@ function () {
               rounds: []
             }).save();
 
-          case 11:
+          case 9:
             currentUser = _context3.sent;
 
-          case 12:
+          case 10:
             return _context3.abrupt("return", done(null, currentUser));
 
-          case 13:
+          case 11:
           case "end":
             return _context3.stop();
         }
