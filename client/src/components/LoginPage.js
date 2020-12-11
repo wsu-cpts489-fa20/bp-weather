@@ -247,13 +247,13 @@ cancelCreateAccount = () => {
                 {this.state.githubLabel}
             </button>
 
-            <button id="google-login-btn" type="button" className="btn btn-github"
+            <button id="google-login-btn" type="button" className="btn btn-google"
                onClick={() => this.handleOAuthLoginClick("google")}>
               <span className={this.state.googleIcon}></span>&nbsp;
                 {this.state.googleLabel}
             </button>
 
-            <button id="facebook-login-btn" type="button" className="btn btn-github"
+            <button id="facebook-login-btn" type="button" className="btn btn-facebook"
                onClick={() => this.handleOAuthLoginClick("facebook")}>
               <span className={this.state.facebookIcon}></span>&nbsp;
                 {this.state.facebookLabel}
