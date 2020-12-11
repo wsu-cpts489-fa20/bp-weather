@@ -35,7 +35,11 @@ Week 4
 * WeatherStation.js
   * Added coordinates to each station
   * Added Country to each station
-
+* Other progress
+  * Moved the icons to the top right
+  * Moved the search bar to the center
+  * Added an icon for the website
+  * Delete from history table
 
 This repo serves as the starting code for all of the CptS 489 project teams in the
 Fa20 semester. It will be pushed to their repos, deployed to their instances on
