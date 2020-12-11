@@ -321,12 +321,26 @@ class WeatherStation extends React.Component {
 
                     {/* History icon */}
                     {/* <span className={this.state.historied ? "history-icon fas fa-history" : "history-icon fa fa-history"} onClick={()=>{this.setHistory()}}></span> */}
-
                     {/* Delete icon */}
                     {/* <span className="delete-icon fa fa-times" onClick={() => this.props.removeStation(this.props.stationId)}></span> */}
-
                     {/* <div class="weatherStation"> */}
 
+                    {/* Favorite icon */}
+                    {this.props.mode != AppMode.COURSES ?
+                        <span id="favorite-icon-btn" className="favorite-icon fa fa-star fa-2x" 
+                            style={{position:"absolute", right:"0%"}}
+                            onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
+                        : null}
+                    {/* Delete icon */}
+                    {this.props.mode != AppMode.FEED ?
+                        <span id="delete-icon-btn" className="delete-icon fa fa-times fa-2x" 
+                            style={{position:"absolute", right:"0%"}}
+                            onClick={() => this.props.removeStation(this.props.stationId)}></span>
+                        : null}
+                    {/* History icon */}
+                    <span id="history-icon-btn" className="history-icon fa fa-history fa-2x" 
+                        style={{position:"absolute", right:"48px"}}
+                        onClick={() => { this.setHistory() }}></span>
 
                     <h2>Weather Conditions at {this.state.place} </h2>
 
@@ -361,20 +375,16 @@ class WeatherStation extends React.Component {
                     <span className="shift-icon fa fa-arrow-down fa-2x" onClick={() => this.props.moveStation(this.props.stationId, "down")}></span>
                     : null
                 }
-                <div >
-                    {/* History icon */}
+                {/* <div >
                     <span id="history-icon-btn" className="history-icon fa fa-history fa-2x" onClick={() => { this.setHistory() }}></span>
 
-                    {/* Favorite icon */}
                     {this.props.mode != AppMode.COURSES ?
                         <span id="favorite-icon-btn" className="favorite-icon fa fa-star fa-2x" onClick={() => { this.favoriteStation(this.props.stationId) }}></span>
                         : null}
-                                            {/* Delete icon */}
                     {this.props.mode != AppMode.FEED ?
                         <span id="delete-icon-btn" className="delete-icon fa fa-times fa-2x" onClick={() => this.props.removeStation(this.props.stationId)}></span>
                         : null}
-
-                </div>
+                </div> */}
             </div>
         );
     }
