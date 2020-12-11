@@ -242,25 +242,30 @@ cancelCreateAccount = () => {
                 Reset your password</button>
             </p>  
             <button type="button" className="btn btn-github"
-               onClick={() => this.handleOAuthLoginClick("github")}>
-              <span className={this.state.githubIcon}></span>&nbsp;
+               onClick={() => this.handleOAuthLoginClick("github")}
+               style={{margin: "0px 2px"}}>
+              <span className={this.state.githubIcon} style={{paddingRight: "8px"}}></span>&nbsp;
                 {this.state.githubLabel}
             </button>
 
             <button id="google-login-btn" type="button" className="btn btn-google"
-               onClick={() => this.handleOAuthLoginClick("google")}>
-              <span className={this.state.googleIcon}></span>&nbsp;
+               onClick={() => this.handleOAuthLoginClick("google")}
+               style={{fontFamily: "Roboto, sans-serif",
+                        margin: "0px 2px"}}>
+              <span className={this.state.googleIcon} style={{paddingRight: "8px"}}></span>&nbsp;
                 {this.state.googleLabel}
             </button>
 
             <button id="facebook-login-btn" type="button" className="btn btn-facebook"
-               onClick={() => this.handleOAuthLoginClick("facebook")}>
-              <span className={this.state.facebookIcon}></span>&nbsp;
+               onClick={() => this.handleOAuthLoginClick("facebook")}
+               style={{margin: "0px 2px"}}>
+              <span className={this.state.facebookIcon} style={{paddingRight: "8px"}}></span>&nbsp;
                 {this.state.facebookLabel}
             </button>
 
             <button id="guest-login-btn" type="button" className="btn btn-github"
-               onClick={this.handleGuestLoginClick}>
+               onClick={this.handleGuestLoginClick}
+               style={{margin: "0px 2px"}}>
               <span className={this.state.guestIcon}></span>&nbsp;
                 {this.state.guestLabel}
             </button>
