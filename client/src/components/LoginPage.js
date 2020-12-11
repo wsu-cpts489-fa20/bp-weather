@@ -24,6 +24,10 @@ constructor() {
                   githubLabel: "Sign in with GitHub",
                   guestLabel: "Sign in as guest",
                   guestIcon: "fa fa-user-alt",
+                  googleIcon: "fa fa-google",
+                  googleLabel: "Sign in with Google",
+                  facebookIcon: "fa fa-facebook-f",
+                  facebookLabel: "Sign in with Facebook",
                   loginMsg: "",
                   newAccountCreated: false
                   };
@@ -241,6 +245,18 @@ cancelCreateAccount = () => {
                onClick={() => this.handleOAuthLoginClick("github")}>
               <span className={this.state.githubIcon}></span>&nbsp;
                 {this.state.githubLabel}
+            </button>
+
+            <button id="google-login-btn" type="button" className="btn btn-github"
+               onClick={() => this.handleOAuthLoginClick("google")}>
+              <span className={this.state.googleIcon}></span>&nbsp;
+                {this.state.googleLabel}
+            </button>
+
+            <button id="facebook-login-btn" type="button" className="btn btn-github"
+               onClick={() => this.handleOAuthLoginClick("facebook")}>
+              <span className={this.state.facebookIcon}></span>&nbsp;
+                {this.state.facebookLabel}
             </button>
 
             <button id="guest-login-btn" type="button" className="btn btn-github"

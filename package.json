@@ -18,7 +18,9 @@
     "express-session": "^1.17.1",
     "mongoose": "^5.10.9",
     "passport": "^0.4.1",
+    "passport-facebook": "^3.0.0",
     "passport-github": "^1.1.0",
+    "passport-google-oauth2": "^0.2.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "regenerator-runtime": "^0.13.7"
