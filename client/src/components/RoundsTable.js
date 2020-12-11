@@ -105,7 +105,7 @@ class RoundsTable extends React.Component {
         <tbody>
           {Object.keys(this.props.Histories).length === 0 ? 
           <tr>
-          <td colSpan="5" style={{fontStyle: "italic"}}>No rounds logged</td>
+          <td colSpan="9" style={{fontStyle: "italic"}}>No weather history logged</td>
           </tr> : this.renderTable()
           }
         </tbody>

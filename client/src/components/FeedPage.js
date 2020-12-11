@@ -341,7 +341,7 @@ class FeedPage extends React.Component {
                     </a>
                 </div> */}
 
-                <form name="searchForLocation" onSubmit={this.addNewStation}>
+                <form name="searchForLocation" style={{textAlign: "center"}} onSubmit={this.addNewStation}>
                     {/* <button onClick={this.addNewStation}><span className="fa fa-search"></span></button> */}
                     <input type="newLocation" id="inputStation" placeholder="Enter a City, State, and Country..."></input>
 
