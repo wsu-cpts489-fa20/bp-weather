@@ -401,8 +401,8 @@ text-align: center;
 
   input[type=newLocation] {
     width: 50%;
-    -webkit-transition: width 0.8s ease-in-out;
-    transition: width 0.8s ease-in-out;
+    -webkit-transition: width 0.5s ease-in-out;
+    transition: width 0.5s ease-in-out;
     text-align: center;
   }
   
