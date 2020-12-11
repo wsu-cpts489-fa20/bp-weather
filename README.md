@@ -27,6 +27,16 @@ Week 3
   * History page can store information when the user hits the record button.
   * Hosted on EB but currently having a 502 bad gateway issue.
   
+Week 4
+* LoginPage.js
+  * Added other oauth logins 
+  * Google
+  * Facebook
+* WeatherStation.js
+  * Added coordinates to each station
+  * Added Country to each station
+
+
 This repo serves as the starting code for all of the CptS 489 project teams in the
 Fa20 semester. It will be pushed to their repos, deployed to their instances on
 AWS EB, and served through https://[proj-name].bfapp.org.

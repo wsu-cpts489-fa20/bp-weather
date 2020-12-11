@@ -17,6 +17,7 @@ require('dotenv').config();
 
 const LOCAL_PORT = 8080;
 const DEPLOY_URL = "https://weather.bfapp.org";
+//"https://weather.bfapp.org";
 //http://localhost:8081";
 
 const PORT = process.env.HTTP_PORT || LOCAL_PORT;
