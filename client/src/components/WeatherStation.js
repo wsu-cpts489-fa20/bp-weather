@@ -42,9 +42,33 @@ class WeatherStation extends React.Component {
         console.log("icon code: " + iconCode);
         console.log("icon url: " + iconUrl);
 
+        let lonSymbol = "N";
+        let latSymbol = "E";
+
+
+        if(currWeather.coord.lat > 0)
+        {
+            latSymbol = "N";
+        }
+        else
+        {
+            latSymbol = "S";
+        }
+
+        if(currWeather.coord.lon > 0)
+        {
+            lonSymbol = "E";
+        }
+        else
+        {
+            lonSymbol = "W";
+        }
+        
 
         this.setState({
-            place: currWeather.name,
+            place: currWeather.name + ", " + currWeather.sys.country, 
+ 
+            coord: Math.abs(currWeather.coord.lat) + latSymbol + ", " + Math.abs(currWeather.coord.lon) + lonSymbol,
 
             retrieved: (new Date()).toLocaleDateString() + " at " + (new Date()).toLocaleTimeString(),
             conditions: currWeather.weather[0].main,
@@ -306,13 +330,14 @@ class WeatherStation extends React.Component {
 
                     <h2>Weather Conditions at {this.state.place} </h2>
 
-
+                    <h5>Coordinates: {this.state.coord} </h5>
 
                     <h6><i>Last updated: {this.state.retrieved}</i>
                         {/* Refresh icon */}
                 &nbsp; <span className="refresh-icon fa fa-retweet"
                             onClick={() => this.getCurrentObservations()}></span>
                     </h6>
+
 
                     <img src={this.state.weatherIcon} alt="weatherIcon" />
                     <h5>Conditions: {this.state.conditions}</h5>

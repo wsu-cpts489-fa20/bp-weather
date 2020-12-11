@@ -11,15 +11,11 @@ renderModeMenuItems = () => {
     case AppMode.FEED:
       return(
         <div>
-
-        {this.props.localAccount && this.props.userObj.id === "guest@mail.com" ? 
-          <div> </div> : 
           <a className="sidemenu-item">
-          <span className="fa fa-users"></span>&nbsp;Followed Users</a>
-        }
-        
-        <a className="sidemenu-item ">
-            <span className="fa fa-search"></span>&nbsp;Search Feed</a>
+            <span className="fa fa-plus"></span>&nbsp;Favorites</a>
+
+          <a className="sidemenu-item">
+            <span className="fa fa-search"></span>&nbsp;History</a>
         </div>
       );
     break;
@@ -27,9 +23,10 @@ renderModeMenuItems = () => {
       return(
         <div>
           <a className="sidemenu-item">
-            <span className="fa fa-plus"></span>&nbsp;Log New Round</a>
+            <span className="fa fa-plus" ></span>&nbsp;Search</a>
+
           <a className="sidemenu-item">
-            <span className="fa fa-search"></span>&nbsp;Search Rounds</a>
+            <span className="fa fa-search"></span>&nbsp;Favorites</a>
         </div>
       );
     break;
@@ -37,9 +34,9 @@ renderModeMenuItems = () => {
       return(
         <div>
         <a className="sidemenu-item">
-            <span className="fa fa-plus"></span>&nbsp;Add a Course</a>
+            <span className="fa fa-plus"></span>&nbsp;Search</a>
         <a className="sidemenu-item">
-            <span className="fa fa-search"></span>&nbsp;Search Courses</a>
+            <span className="fa fa-search"></span>&nbsp;History</a>
         </div>
       );
     default:
