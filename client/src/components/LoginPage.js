@@ -243,7 +243,8 @@ cancelCreateAccount = () => {
             </p>  
             <button type="button" className="btn btn-github"
                onClick={() => this.handleOAuthLoginClick("github")}
-               style={{margin: "0px 2px"}}>
+               style={{fontFamily: "Roboto, sans-serif",
+                        margin: "0px 2px"}}>
               <span className={this.state.githubIcon} style={{paddingRight: "8px"}}></span>&nbsp;
                 {this.state.githubLabel}
             </button>
@@ -258,14 +259,16 @@ cancelCreateAccount = () => {
 
             <button id="facebook-login-btn" type="button" className="btn btn-facebook"
                onClick={() => this.handleOAuthLoginClick("facebook")}
-               style={{margin: "0px 2px"}}>
+               style={{fontFamily: "Roboto, sans-serif",
+                        margin: "0px 2px"}}>
               <span className={this.state.facebookIcon} style={{paddingRight: "8px"}}></span>&nbsp;
                 {this.state.facebookLabel}
             </button>
 
             <button id="guest-login-btn" type="button" className="btn btn-github"
                onClick={this.handleGuestLoginClick}
-               style={{margin: "0px 2px"}}>
+               style={{fontFamily: "Roboto, sans-serif",
+                        margin: "0px 2px"}}>
               <span className={this.state.guestIcon}></span>&nbsp;
                 {this.state.guestLabel}
             </button>
